@@ -1,5 +1,51 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Form";
 }
+
+<div class="container">
+    <h2 class="text-center mb-4">Submit Monthly Claim</h2>
+    <form>
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Enter your name">
+        </div>
+        <div class="mb-3">
+            <label for="surname" class="form-label">Surname</label>
+            <input type="text" class="form-control" id="surname" placeholder="Enter your surname">
+        </div>
+        <div class="mb-3">
+            <label for="employeeNumber" class="form-label">Employee Number</label>
+            <input type="text" class="form-control" id="employeeNumber" placeholder="Enter your employee number">
+        </div>
+        <div class="mb-3">
+            <label for="contactDetails" class="form-label">Contact Details</label>
+            <input type="text" class="form-control" id="contactDetails" placeholder="Enter your contact details">
+        </div>
+        <div class="mb-3">
+            <label for="module" class="form-label">Module</label>
+            <select class="form-select" id="module">
+                <option selected>Select Module</option>
+                <option value="DATA6221">DATA6221</option>
+                <option value="PROG6221">PROG6221</option>
+                <option value="IPMA6212">IPMA6212</option>
+                <option value="HCIN6221">HCIN6221</option>
+                <option value="SAND6221">SAND6221</option>
+                <option value="IQTT5212">IQTT5212</option>
+                <option value="BUSI5212">BUSI5212</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="programme" class="form-label">Programme</label>
+            <input type="text" class="form-control" id="programme" placeholder="Enter programme">
+        </div>
+        <div class="mb-3">
+            <label for="hoursWorked" class="form-label">Number of Hours Worked</label>
+            <input type="number" class="form-control" id="hoursWorked" placeholder="Enter number of hours worked">
+        </div>
+        <div class="mb-3">
+            <label for="hourlyRate" class="form-label">Hourly Rate (R)</label>
+            <input type="number" class="form-control" id="hourlyRate" placeholder="Enter hourly rate">
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Submit Claim</button>
+    </form>
+</div>
