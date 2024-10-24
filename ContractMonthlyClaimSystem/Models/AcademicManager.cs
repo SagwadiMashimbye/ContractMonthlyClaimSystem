@@ -1,29 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ContractMonthlyClaimSystem.Models
 {
     public class AcademicManager
     {
         [Key]
-        public string ManagerId { get; set; } // Unique identifier for the manager
-
+        public int ManagerID { get; set; }
         [Required]
-        public string Name { get; set; } // Manager's first name
-
+        public string ManagerName { get; set; }
         [Required]
-        public string Surname { get; set; } // Manager's surname
-
+        public string ManagerSurname { get; set; }
         [Required]
-        [EmailAddress]
-        public string Email { get; set; } // Manager's email address
-
+        public string ManagerEmail { get; set; }
         [Required]
-        [Phone]
-        public string Phone { get; set; } // Manager's phone number
-                                          // Foreign key to the User table
-        public string UserId { get; set; }
+        public string ManagerPhone { get; set; }
+        [Required]
+        public string ManagerPassword { get; set; }
 
-        // Navigation property
-        public User User { get; set; }
+        public ICollection<ApprovalProcess> ApprovalProcesses { get; set; } = new List<ApprovalProcess>();
     }
 }

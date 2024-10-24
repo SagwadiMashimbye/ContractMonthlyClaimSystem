@@ -1,48 +1,110 @@
-﻿@model ContractMonthlyClaimSystem.Models.User
+﻿@model ContractMonthlyClaimSystem.Models.SubmitClaimsViewModel
 @{
     ViewData["Title"] = "Welcome Page";
 }
 
-<div class="container">
-    <div class="text-center">
-        <h1 class="display-4">Welcome to the Contract Monthly Claim System</h1>
-        <p>We're glad to have you here!</p>
+<div class="container page-background">
+    <div class="login-container">
+        <div class="login-box">
+            @if (User.Identity.IsAuthenticated)
+            {
+                var userRole = User.IsInRole("Lecturer") ? "Lecturer" : User.IsInRole("Programme Coordinator") ? "Programme Coordinator" : User.IsInRole("Academic Manager") ? "Academic Manager" : null;
 
-        @if (User.IsInRole("Lecturer"))
-        {
-            <p>You can submit your claims or track the status of existing claims below.</p>
-            <div class="row justify-content-center">
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title">Submit Claim</h5>
-                            <a href="@Url.Action("Form", "Home")" class="btn btn-primary">Go to Claim Submission</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title">View Claims</h5>
-                            <a href="@Url.Action("Track", "Home")" class="btn btn-primary">View My Claims</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-        else if (User.IsInRole("ProgrammeCoordinator") || User.IsInRole("AcademicManager"))
-        {
-            <p>You can verify submitted claims below.</p>
-            <div class="row justify-content-center">
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title">Verify Claims</h5>
-                            <a href="@Url.Action("Verify", "Home")" class="btn btn-primary">Go to Claim Verification</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
+                if (userRole == "Lecturer" && Model.Lecturer != null)
+                {
+                    <h1 class="login-title">Welcome Back, @Model.Lecturer.LecturerName @Model.Lecturer.LecturerSurname!</h1>
+                    <p class="login-subtitle">We're glad to have you back. Ready to submit your claims?</p>
+                    <a class="btn btn-primary submit-btn" asp-controller="Home" asp-action="Submit">Go to Submit Claims</a>
+                }
+                else if (userRole == "Programme Coordinator" && Model.ProgrammeCoordinator != null)
+                {
+                    <h1 class="login-title">Welcome Back, @Model.ProgrammeCoordinator.CoordinatorName @Model.ProgrammeCoordinator.CoordinatorSurname!</h1>
+                    <p class="login-subtitle">Ready to review and approve claims?</p>
+                    <a class="btn btn-primary submit-btn" asp-controller="Home" asp-action="VerifyClaims">Go to Review Claims</a>
+                }
+                else if (userRole == "Academic Manager" && Model.AcademicManager != null)
+                {
+                    <h1 class="login-title">Welcome Back, @Model.AcademicManager.ManagerName @Model.AcademicManager.ManagerSurname!</h1>
+                    <p class="login-subtitle">Ready to review and oversee claims?</p>
+                    <a class="btn btn-primary submit-btn" asp-controller="Home" asp-action="VerifyClaims">Go to Review Claims</a>
+                }
+                else
+                {
+                    <p>Error: User role not recognized or user data is missing.</p>
+                }
+            }
+            else
+            {
+                <h1 class="login-title">Welcome, Guest!</h1>
+                <p class="login-subtitle">
+                    Welcome to our Contract Monthly Claims System! This platform helps lecturers submit claims for hours worked, and program coordinators to review and approve them.
+                    <br /><br />
+                    Please log in to access your account and get started.
+                </p>
+                <a class="btn btn-primary login-btn" asp-controller="Home" asp-action="Login">Log In</a>
+            }
+        </div>
     </div>
 </div>
+
+<!-- Custom styles for the welcome page -->
+<style>
+    .page-background {
+        background-image: url("../../wwwroot/Images/BG2.jpg");
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .login-box {
+        background-color: #ffffff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .login-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 2rem;
+        color: #4a148c;
+        margin-bottom: 1rem;
+    }
+
+    .login-subtitle {
+        font-family: 'Poppins', sans-serif;
+        color: #4a148c;
+        margin-bottom: 2rem;
+    }
+
+    .btn-primary {
+        background-color: #7b1fa2;
+        color: #ffffff;
+        border: none;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-primary:hover {
+            background-color: #6a0080;
+        }
+</style>

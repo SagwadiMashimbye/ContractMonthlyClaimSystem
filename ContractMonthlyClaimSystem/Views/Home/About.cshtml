@@ -1,0 +1,140 @@
+﻿@model ContractMonthlyClaimSystem.Models.SubmitClaimsViewModel
+@{
+    ViewData["Title"] = "About Us";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center">@ViewData["Title"]</h1>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="text-center my-4">
+            @if (User.IsInRole("Programme Coordinator"))
+            {
+                var coordinator = Model.ProgrammeCoordinator;
+                if (coordinator != null)
+                {
+                    <p class="lead">Welcome, @coordinator.CoordinatorName @coordinator.CoordinatorSurname!</p>
+                    <p>Your role as a Programme Coordinator involves verifying claims and managing lecturers effectively.</p>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h2>Overview</h2>
+                            <p>
+                                Your role is crucial in ensuring that all claims submitted by lecturers are thoroughly reviewed.
+                                Use this platform to streamline the verification process, maintain communication with lecturers,
+                                and uphold the integrity of your program.
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h2>Responsibilities</h2>
+                            <ul>
+                                <li>Verify claims for accuracy and compliance.</li>
+                                <li>Approve or reject claims based on criteria.</li>
+                                <li>Provide feedback on rejected claims.</li>
+                                <li>Maintain records for reporting and audits.</li>
+                                <li>Communicate with lecturers to resolve issues.</li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p>Error: Programme Coordinator not found.</p>
+                }
+            }
+            else if (User.IsInRole("Academic Manager"))
+            {
+                var academicManager = Model.AcademicManager;
+                if (academicManager != null)
+                {
+                    <p class="lead">Welcome, @academicManager.ManagerName @academicManager.ManagerSurname!</p>
+                    <p>You oversee the management of claims and ensure compliance with institutional standards.</p>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h2>Your Role</h2>
+                            <p>
+                                As an Academic Manager, you play a vital role in the claims process, ensuring that all claims are
+                                handled correctly. Use this platform to support Programme Coordinators and lecturers.
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h2>Responsibilities</h2>
+                            <ul>
+                                <li>Review claims for compliance.</li>
+                                <li>Provide oversight to Programme Coordinators.</li>
+                                <li>Collaborate with faculty on claim issues.</li>
+                                <li>Maintain comprehensive records for audits.</li>
+                                <li>Develop strategies for process improvements.</li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p>Error: Academic Manager not found.</p>
+                }
+            }
+            else if (User.IsInRole("Lecturer"))
+            {
+                var lecturer = Model.Lecturer;
+                <p class="lead">Welcome, @lecturer.LecturerName @lecturer.LecturerSurname!</p>
+                <p>You can submit claims and track their status in real-time.</p>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h2>Your Role</h2>
+                        <p>
+                            As a Lecturer, you play an essential role in the academic community. Use this platform to submit your claims
+                            for hours worked and track the progress efficiently.
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h2>Key Features</h2>
+                        <ul>
+                            <li>Real-Time Tracking of claims.</li>
+                            <li>Detailed Reporting for transparency.</li>
+                            <li>User Management features.</li>
+                            <li>Notification System for updates.</li>
+                        </ul>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <p>Error: Role not recognized.</p>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center my-4">
+            <p class="lead">Welcome, Guest!</p>
+            <p>Please log in to access your account and manage claims.</p>
+            <a class="btn btn-primary" asp-controller="Home" asp-action="Login">Log In</a>
+        </div>
+    }
+</div>
+
+<style>
+    .lead {
+        font-weight: bold;
+        color: #4a148c;
+    }
+
+    h2 {
+        margin-top: 1.5rem;
+        color: #7b1fa2;
+    }
+
+    p {
+        color: #4a148c;
+    }
+
+    .btn-primary {
+        background-color: #7b1fa2;
+        border: none;
+    }
+
+        .btn-primary:hover {
+            background-color: #6a0080;
+        }
+</style>

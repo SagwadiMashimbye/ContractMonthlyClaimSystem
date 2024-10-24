@@ -1,0 +1,147 @@
+﻿@model ContractMonthlyClaimSystem.Models.ProgrammeCoordinator
+
+@{
+    ViewData["Title"] = "Register Programme Coordinator";
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+    {
+        <div class="alert alert-danger">
+            @error.ErrorMessage
+        </div>
+    }
+}
+
+<div class="register-container">
+    <div class="register-box">
+        <h1 class="register-title">Register Programme Coordinator</h1>
+        <p class="register-subtitle">Fill in the details below to create your account</p>
+
+        <!-- Registration Form -->
+        <form asp-action="RegisterC" method="post">
+            <!-- Coordinator Name input -->
+            <div class="form-group">
+                <label for="CoordinatorName">First Name</label>
+                <input asp-for="CoordinatorName" class="form-control" placeholder="Enter your first name" required>
+                <span asp-validation-for="CoordinatorName" class="text-danger"></span>
+            </div>
+
+            <!-- Coordinator Surname input -->
+            <div class="form-group">
+                <label for="CoordinatorSurname">Surname</label>
+                <input asp-for="CoordinatorSurname" class="form-control" placeholder="Enter your surname" required>
+                <span asp-validation-for="CoordinatorSurname" class="text-danger"></span>
+            </div>
+
+            <!-- Coordinator Email input -->
+            <div class="form-group">
+                <label for="CoordinatorEmail">Email</label>
+                <input asp-for="CoordinatorEmail" class="form-control" placeholder="Enter your email" required>
+                <span asp-validation-for="CoordinatorEmail" class="text-danger"></span>
+            </div>
+
+            <!-- Coordinator Phone input -->
+            <div class="form-group">
+                <label for="CoordinatorPhone">Phone</label>
+                <input asp-for="CoordinatorPhone" class="form-control" placeholder="Enter your phone number" required>
+                <span asp-validation-for="CoordinatorPhone" class="text-danger"></span>
+            </div>
+
+            <!-- Coordinator Password input -->
+            <div class="form-group">
+                <label for="CoordinatorPassword">Password</label>
+                <input asp-for="CoordinatorPassword" type="password" class="form-control" placeholder="Enter your password" required>
+                <span asp-validation-for="CoordinatorPassword" class="text-danger"></span>
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary register-btn">Register</button>
+        </form>
+
+        <!-- Option for password recovery -->
+        <p class="login-option"><a href="@Url.Action("Login", "Home")">Already have an account? Log in here.</a></p>
+    </div>
+</div>
+
+<!-- Custom styles for the register page -->
+<style>
+    .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f3e5f5; /* Light purple background */
+    }
+
+    .register-box {
+        background-color: #ffffff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .register-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 2rem;
+        color: #4a148c; /* Deep purple text */
+    }
+
+    .register-subtitle {
+        font-family: 'Poppins', sans-serif;
+        color: #7b1fa2; /* Medium purple color */
+        margin-bottom: 2rem;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        color: #4a148c;
+    }
+
+    .form-control {
+        border: 1px solid #7b1fa2;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border-radius: 5px;
+        font-family: 'Poppins', sans-serif;
+        color: #4a148c;
+    }
+
+        .form-control:focus {
+            border-color: #4a148c;
+            box-shadow: 0 0 5px rgba(122, 34, 128, 0.5);
+        }
+
+    .register-btn {
+        background-color: #7b1fa2; /* Primary button color */
+        color: #ffffff;
+        border: none;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+    }
+
+        .register-btn:hover {
+            background-color: #6a0080; /* Darker shade on hover */
+        }
+
+    .login-option {
+        margin-top: 1rem;
+    }
+
+        .login-option a {
+            color: #7b1fa2; /* Link color */
+            text-decoration: none;
+        }
+
+            .login-option a:hover {
+                text-decoration: underline;
+            }
+</style>

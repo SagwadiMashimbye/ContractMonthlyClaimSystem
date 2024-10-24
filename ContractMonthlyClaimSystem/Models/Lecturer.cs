@@ -1,26 +1,23 @@
-﻿using ContractMonthlyClaimSystem.Models;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-public class Lecturer
+namespace ContractMonthlyClaimSystem.Models
 {
-    [Key]
-    public string LecturerId { get; set; }
+    public class Lecturer
+    {
+        [Key]
+        public int LecturerID { get; set; }
+        [Required]
+        public string LecturerName { get; set; }
+        [Required]
+        public string LecturerSurname { get; set; }
+        [Required]
+        public string LecturerPhone { get; set; }
+        [Required]
+        public string LecturerEmail { get; set; }
+        [Required]
+        public string LecturerPassword { get; set; }
 
-    [Required]
-    public string Name { get; set; }
-    [Required]
-    public string Surname { get; set; }
-
-    [Required]
-    [EmailAddress]
-    public string Email { get; set; }
-
-    [Required]
-    public string Phone { get; set; }
-
-    // Foreign key to the User table
-    public string UserId { get; set; }
-
-    // Navigation property
-    public User User { get; set; }
+        public ICollection<Claims> Claims { get; set; } = new List<Claims>();
+    }
 }

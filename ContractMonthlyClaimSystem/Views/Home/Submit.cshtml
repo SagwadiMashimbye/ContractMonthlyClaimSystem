@@ -1,0 +1,202 @@
+﻿@model ContractMonthlyClaimSystem.Models.ClaimSubmissionDTO
+@{
+    ViewData["Title"] = "Submit Claims";
+}
+
+<div class="lecturer-info">
+    @if (User.Identity.IsAuthenticated)
+    {
+        <h2>Welcome, @Model.LecturerName @Model.LecturerSurname!</h2>
+        <p><strong>Phone:</strong> @Model.LecturerPhone</p>
+        <p><strong>Email:</strong> @Model.LecturerEmail</p>
+    }
+    else
+    {
+        <h2>Welcome, Guest!</h2>
+        <p>Please log in to submit your claims.</p>
+    }
+</div>
+
+
+<form asp-action="Submit" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+    <div class="form-group">
+        <label>Select Module</label>
+        @foreach (var module in Model.Modules)
+        {
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="SelectedModules" value="@module" id="module_@module" onchange="calculateTotal()">
+                <label class="form-check-label" for="module_@module">@module</label>
+            </div>
+        }
+        <small class="form-text text-muted">You can select multiple modules.</small>
+        <span asp-validation-for="SelectedModules" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Claim.HoursWorked">Hours Worked</label>
+        <input asp-for="Claim.HoursWorked" type="number" class="form-control" min="1" max="200" required onchange="calculateTotal()">
+        <span asp-validation-for="Claim.HoursWorked" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Claim.HourlyRate">Hourly Rate (R)</label>
+        <input asp-for="Claim.HourlyRate" type="number" class="form-control" step="0.01" min="50" max="1000" required onchange="calculateTotal()">
+        <span asp-validation-for="Claim.HourlyRate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="TotalClaimAmount">Total Claim Amount (R)</label>
+        <input type="text" class="form-control" id="TotalClaimAmount" name="TotalClaimAmount" readonly>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Claim.AdditionalNotes">Additional Notes</label>
+        <textarea asp-for="Claim.AdditionalNotes" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Claim.AdditionalNotes" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="SupportingDocuments">Upload Supporting Document</label>
+        <input type="file" class="form-control-file" id="SupportingDocuments" name="SupportingDocuments" accept=".pdf, .docx, .xlsx" required>
+        <small class="form-text text-muted">Accepted formats: PDF, DOCX, XLSX. Max size: 5MB.</small>
+        <div id="fileNameDisplay"></div>
+    </div>
+
+    <input type="hidden" name="Lecturer" />
+    <input type="hidden" asp-for="LecturerID" />
+    <input type="hidden" asp-for="LecturerName" />
+    <input type="hidden" asp-for="LecturerSurname" />
+    <input type="hidden" asp-for="LecturerPhone" />
+    <input type="hidden" asp-for="LecturerEmail" />
+
+    <input type="hidden" name="Claim.Status" value="Pending" />
+
+    <button type="submit" class="btn btn-primary submit-btn">Submit Claim</button>
+</form>
+
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <strong>Please fix the errors below:</strong>
+        @Html.ValidationSummary()
+    </div>
+}
+
+<script>
+    function calculateTotal() {
+        const modules = document.querySelectorAll('input[name="SelectedModules"]:checked');
+        const hoursWorked = parseFloat(document.querySelector('input[name="Claim.HoursWorked"]').value) || 0;
+        const hourlyRate = parseFloat(document.querySelector('input[name="Claim.HourlyRate"]').value) || 0;
+
+        const moduleCount = modules.length;
+        const totalClaimAmount = hoursWorked * hourlyRate * moduleCount;
+
+        document.getElementById('TotalClaimAmount').value = totalClaimAmount.toFixed(2);
+    }
+
+    function validateForm() {
+        const modules = document.querySelectorAll('input[name="SelectedModules"]:checked');
+        if (modules.length === 0) {
+            alert("Please select at least one module.");
+            return false;
+        }
+        return true;
+    }
+
+    document.getElementById('SupportingDocuments').addEventListener('change', function () {
+        const fileInput = this;
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const file = fileInput.files[0];
+
+        if (file) {
+            if (file.size > 5242880) {
+                alert("File size exceeds 5MB. Please upload a smaller file.");
+                fileInput.value = "";
+                fileNameDisplay.innerHTML = "";
+            } else {
+                fileNameDisplay.innerHTML = "File uploaded: " + file.name;
+            }
+        }
+    });
+</script>
+
+<!-- Custom styles for the submission page -->
+<style>
+    .submit-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f7f9fc; /* Adjust background color to match the theme */
+    }
+
+    .submit-box {
+        background-color: #ffffff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .submit-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2rem;
+        color: #333333;
+        margin-bottom: 1.5rem;
+    }
+
+    .lecturer-info {
+        background-color: #f1f1f1;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+        .lecturer-info h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.75rem;
+            color: #333;
+        }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-control-file2 {
+        border: 0px solid #dddddd;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border-radius: 5px;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    .form-control,
+    .form-control-file {
+        border: 1px solid #dddddd;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border-radius: 5px;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    .submit-btn {
+        background-color: #DE1B38;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 5px;
+        font-size: 1.1rem;
+        font-family: 'Montserrat', sans-serif;
+        transition: background-color 0.3s;
+        display: block;
+        width: 100%;
+        cursor: pointer;
+    }
+
+        .submit-btn:hover {
+            background-color: #87071a;
+        }
+</style>

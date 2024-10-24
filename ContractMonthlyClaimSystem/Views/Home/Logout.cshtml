@@ -1,0 +1,105 @@
+﻿@{
+    ViewData["Title"] = "Logout";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#">Contract Monthly Claim System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Login", "Home")">Login</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Logout Message -->
+    <div class="container logout-container text-center mt-5">
+        <h2 class="logout-title">You have been logged out.</h2>
+        <p class="logout-message">Thank you for using the Contract Monthly Claim System.</p>
+        <a class="btn btn-primary mt-4" href="@Url.Action("Login", "Home")">Login Again</a>
+    </div>
+
+    <!-- Custom styles for the logout page -->
+    <style>
+        /* Page Background */
+        body {
+            background-color: #f3e5f5;
+            color: #4a148c;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: #ce93d8;
+            color: #4a148c;
+            padding: 15px 30px;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .navbar-brand {
+            color: #4a148c;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .nav-link {
+            color: #4a148c;
+            font-weight: 500;
+            margin-right: 20px;
+        }
+
+        /* Container Styling */
+        .logout-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .logout-title {
+            font-size: 2rem;
+            color: #4a148c;
+        }
+
+        .logout-message {
+            color: #6c757d;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background-color: #7b1fa2;
+            border: none;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                background-color: #6a0080;
+            }
+    </style>
+
+</body>
+</html>

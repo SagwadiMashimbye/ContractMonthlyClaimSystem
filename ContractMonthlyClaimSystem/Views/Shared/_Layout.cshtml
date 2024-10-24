@@ -3,30 +3,68 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Monthly Claim</title>
+    <title>@ViewData["Title"] - Contract Monthly Claim System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ContractMonthlyClaimSystem.styles.css" asp-append-version="true" />
+
     <style>
-        body {
+        /* General Styles */
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Poppins', sans-serif;
             background-color: #f3e5f5;
             color: #4a148c;
         }
 
+        /* Navbar Styles */
         .navbar {
             background-color: #ce93d8;
+            color: #4a148c;
+            padding: 15px 30px;
+            border-radius: 0 0 10px 10px;
         }
 
-        .navbar-brand, .nav-link {
-            color: #4a148c !important;
+        .navbar-brand {
+            color: #4a148c;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .nav-link {
+            color: #4a148c;
+            font-weight: 500;
+            margin-right: 20px;
         }
 
         .navbar-toggler {
             border-color: #4a148c;
         }
 
+        .profile-circle {
+            background-color: #4a148c;
+            color: #fff;
+            font-size: 16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .profile-circle:hover {
+            background-color: #6a0080;
+        }
+
+        /* Content Area */
         .container {
             margin-top: 30px;
+            flex: 1;
         }
 
         .form-control {
@@ -37,88 +75,128 @@
             font-weight: bold;
         }
 
+        /* Footer Styles */
         footer {
             background-color: #e1bee7;
+            color: #4a148c;
+            padding: 20px;
+            text-align: center;
         }
 
+        /* Button Styles */
         .btn-primary {
             background-color: #7b1fa2;
             border: none;
         }
 
-            .btn-primary:hover {
-                background-color: #6a0080;
+        .btn-primary:hover {
+            background-color: #6a0080;
+        }
+
+        /* Responsive Adjustments */
+        @@media (max-width: 768px) {
+            .navbar {
+                padding: 10px 20px;
             }
+
+            .navbar-brand {
+                font-size: 22px;
+            }
+
+            .nav-link {
+                font-size: 14px;
+                margin-right: 10px;
+            }
+
+            .profile-circle {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .collapse.navbar-collapse {
+                justify-content: flex-end;
+            }
+        }
     </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-light border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Monthly Claims</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    Contract System
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                        aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        @if (User.Identity.IsAuthenticated)
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        @if (User.IsInRole("Lecturer"))
                         {
-                            // Check if the user is a Lecturer
-                            if (User.IsInRole("Lecturer"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Track">Track</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Form">Form</a>
-                                </li>
-                            }
-                            // Check if the user is a Programme Coordinator or Academic Manager
-                            else if (User.IsInRole("ProgrammeCoordinator") || User.IsInRole("AcademicManager"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Verify">Verify</a>
-                                </li>
-                            }
                             <li class="nav-item">
-                                <form asp-controller="Home" asp-action="Logout" method="post" class="d-inline">
-                                    <button type="submit" class="nav-link btn btn-link" style="color: inherit; text-decoration: none;">
-                                        Log Out
-                                    </button>
-                                </form>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Submit">Submit Claim</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Track">Track Status</a>
                             </li>
                         }
-                        else
+                        else if (User.IsInRole("Programme Coordinator") || User.IsInRole("Academic Manager"))
                         {
-                            // Show login option for non-authenticated users
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Log In</a>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="VerifyClaims">Verify Claims</a>
                             </li>
                         }
+                        <li class="nav-item dropdown">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                var nameParts = User.Identity.Name.Split(' ');
+                                var initials = nameParts.Length >= 2 ? $"{nameParts[0][0]}{nameParts[1][1]}" : $"{nameParts[0][0]}";
+
+                                <a class="profile-circle dropdown-toggle" href="#" id="profileDropdown"
+                                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @initials
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                    <li>
+                                        <form asp-area="" asp-controller="Home" asp-action="Logout" method="post">
+                                            <button type="submit" class="dropdown-item">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            }
+                            else
+                            {
+                                <button class="btn btn-primary" onclick="window.location.href='@Url.Action("Login", "Home")'">Log In</button>
+                            }
+                        </li>
                     </ul>
                 </div>
-
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer>
         <div class="container">
-            &copy; 2024 - Monthly Claims by Sagwadi
+            &copy; 2024 - Contract Monthly Claim System
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

@@ -1,29 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ContractMonthlyClaimSystem.Models
 {
     public class ProgrammeCoordinator
     {
         [Key]
-        public string CoordinatorId { get; set; } // Unique identifier for the coordinator
-
+        public int CoordinatorID { get; set; }
         [Required]
-        public string Name { get; set; } // Coordinator's first name
-
+        public string CoordinatorName { get; set; }
         [Required]
-        public string Surname { get; set; } // Coordinator's surname
-
+        public string CoordinatorSurname { get; set; }
         [Required]
-        [EmailAddress]
-        public string Email { get; set; } // Coordinator's email address
-
+        public string CoordinatorEmail { get; set; }
         [Required]
-        [Phone]
-        public string Phone { get; set; } // Coordinator's phone number
-                                          // Foreign key to the User table
-        public string UserId { get; set; }
+        public string CoordinatorPhone { get; set; }
+        [Required]
+        public string CoordinatorPassword { get; set; }
 
-        // Navigation property
-        public User User { get; set; }
+        public ICollection<ApprovalProcess> ApprovalProcesses { get; set; } = new List<ApprovalProcess>();
     }
 }
