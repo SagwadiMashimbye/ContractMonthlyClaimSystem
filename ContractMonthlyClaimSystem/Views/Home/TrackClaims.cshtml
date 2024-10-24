@@ -1,4 +1,182 @@
-﻿@model List<ClaimSubmissionInfo>
+﻿<style>
+    /* General Styles */
+    html, body {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        font-family: 'Poppins', sans-serif;
+        background-color: #f3e5f5;
+        color: #4a148c;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+        background-color: #ce93d8;
+        color: #4a148c;
+        padding: 15px 30px;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .navbar-brand {
+        color: #4a148c;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .nav-link {
+        color: #4a148c;
+        font-weight: 500;
+        margin-right: 20px;
+    }
+
+    .navbar-toggler {
+        border-color: #4a148c;
+    }
+
+    .profile-circle {
+        background-color: #4a148c;
+        color: #fff;
+        font-size: 16px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .profile-circle:hover {
+        background-color: #6a0080;
+    }
+
+    /* Content Area */
+    .container {
+        margin-top: 30px;
+        flex: 1;
+    }
+
+    .form-control {
+        border-color: #7b1fa2;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    /* Footer Styles */
+    footer {
+        background-color: #e1bee7;
+        color: #4a148c;
+        padding: 20px;
+        text-align: center;
+    }
+
+    /* Button Styles */
+    .btn-primary {
+        background-color: #7b1fa2;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #6a0080;
+    }
+
+    /* Responsive Adjustments */
+    @@media (max-width: 768px) {
+        .navbar {
+            padding: 10px 20px;
+        }
+
+        .navbar-brand {
+            font-size: 22px;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .profile-circle {
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
+        }
+
+        .container {
+            padding: 10px;
+        }
+
+        .collapse.navbar-collapse {
+            justify-content: flex-end;
+        }
+    }
+
+    /* New Styles for Claims Page */
+    body {
+        background-color: #f8f9fa; /* Light background color for the page */
+    }
+
+    .view-toggle {
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: flex-end; /* Align buttons to the right */
+    }
+
+    .btn {
+        margin-left: 10px; /* Space between buttons */
+    }
+
+    .active-btn {
+        background-color: #DE1B38; /* Active button color */
+        color: white; /* Text color for active button */
+    }
+
+    /* Default view (List View) */
+    .list-view .claim-item {
+        display: block;
+        width: 100%; /* Full width for list view */
+    }
+
+    /* Grid View layout */
+    .grid-view .claim-item {
+        display: flex;
+        flex-direction: column;
+        width: calc(33.333% - 20px); /* Three items per row */
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+
+    /* Styling for cards */
+    .card {
+        border: 1px solid #DE1B38;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for cards */
+    }
+
+    /* Status bar and progress */
+    .status-text {
+        font-weight: bold;
+    }
+
+    .progress {
+        height: 1.5rem;
+        margin-top: 0.5rem;
+    }
+
+    ul {
+        list-style-type: disc;
+        margin-left: 20px;
+    }
+
+    /* Adjusting card spacing */
+    .claim-item {
+        margin-bottom: 20px; /* Space between claim items */
+    }
+</style>
+
+@model List<ClaimSubmissionInfo>
 @using System.Security.Claims
 @using System.Linq
 @using ContractMonthlyClaimSystem.Context; 
@@ -100,7 +278,6 @@
     </div>
 </div>
 
-
 @functions {
     private string GetProgressBarClass(string status)
     {
@@ -124,68 +301,6 @@
         };
     }
 }
-
-<style>
-    body {
-        background-color: #f8f9fa; /* Light background color for the page */
-    }
-
-    .container {
-        margin-top: 20px;
-    }
-
-    .view-toggle {
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: flex-end; /* Align buttons to the right */
-    }
-
-    .btn {
-        margin-left: 10px; /* Space between buttons */
-    }
-
-    .active-btn {
-        background-color: #DE1B38; /* Active button color */
-        color: white; /* Text color for active button */
-    }
-
-    /* Default view (List View) */
-    .list-view .claim-item {
-        display: block;
-        width: 100%; /* Full width for list view */
-    }
-
-    /* Grid View layout */
-    .grid-view .claim-item {
-        display: flex;
-        flex-direction: column;
-        width: calc(33.333% - 20px); /* Three items per row */
-        margin-right: 10px;
-        margin-left: 10px;
-    }
-
-    /* Styling for cards */
-    .card {
-        border: 1px solid #DE1B38;
-        border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for cards */
-    }
-
-    /* Status bar and progress */
-    .status-text {
-        font-weight: bold;
-    }
-
-    .progress {
-        height: 1.5rem;
-        margin-top: 0.5rem;
-    }
-
-    ul {
-        list-style-type: disc;
-        margin-left: 20px;
-    }
-</style>
 
 <script>
     // JavaScript to toggle between List and Grid view
