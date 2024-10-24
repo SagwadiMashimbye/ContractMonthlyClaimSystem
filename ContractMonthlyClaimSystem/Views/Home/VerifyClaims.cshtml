@@ -7,7 +7,7 @@
 <div class="container">
     <h1 class="text-center">Verify Claims</h1>
 
-    <div class="view-toggle mb-3">
+    <div class="view-toggle mb-4">
         <button id="listViewBtn" class="btn btn-outline-primary active-btn">List View</button>
         <button id="gridViewBtn" class="btn btn-outline-secondary">Grid View</button>
     </div>
@@ -39,18 +39,20 @@
 
                             @if (claim.Status == "Pending")
                             {
-                                <form asp-action="ApproveClaim" method="post">
-                                    <input type="hidden" name="claimId" value="@claim.ClaimID" />
-                                    <button type="submit" class="btn btn-success">Approve</button>
-                                </form>
-                                <form asp-action="RejectClaim" method="post">
-                                    <input type="hidden" name="claimId" value="@claim.ClaimID" />
-                                    <div class="form-group mt-2">
-                                        <label for="feedback">Provide Feedback:</label>
-                                        <textarea class="form-control" name="feedback" id="feedback" rows="2" required></textarea>
-                                    </div>
-                                    <button type="submit" class="btn btn-danger mt-2">Reject</button>
-                                </form>
+                                <div class="d-flex justify-content-between mt-3">
+                                    <form asp-action="ApproveClaim" method="post" class="me-2">
+                                        <input type="hidden" name="claimId" value="@claim.ClaimID" />
+                                        <button type="submit" class="btn btn-success">Approve</button>
+                                    </form>
+                                    <form asp-action="RejectClaim" method="post" class="flex-grow-1">
+                                        <input type="hidden" name="claimId" value="@claim.ClaimID" />
+                                        <div class="form-group mt-2">
+                                            <label for="feedback">Provide Feedback:</label>
+                                            <textarea class="form-control" name="feedback" id="feedback" rows="2" required></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-danger mt-2">Reject</button>
+                                    </form>
+                                </div>
                             }
                             else if (claim.Status == "Rejected")
                             {
@@ -120,16 +122,22 @@
         border: 1px solid #DE1B38;
         border-radius: 10px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        padding: 15px; /* Reduced padding for a more compact layout */
+        padding: 15px;
+        transition: transform 0.2s; /* Smooth transform for hover effect */
     }
+
+        .card:hover {
+            transform: scale(1.02); /* Slight zoom effect on hover */
+        }
 
     .card-body p {
         margin-bottom: 5px; /* Reduced margin between <p> tags */
     }
 
     .card-title {
-        font-size: 1.25rem;
+        font-size: 1.5rem; /* Increased title font size */
         margin-bottom: 10px;
+        color: #4a148c; /* Match color with theme */
     }
 
     .status-text {
@@ -169,7 +177,6 @@
         margin-left: 5px;
     }
 </style>
-
 
 <script>
     document.getElementById('listViewBtn').addEventListener('click', function () {
