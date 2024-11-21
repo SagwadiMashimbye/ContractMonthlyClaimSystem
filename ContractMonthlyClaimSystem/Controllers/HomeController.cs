@@ -1,6 +1,6 @@
-using Contract_Monthly_Claim_System.Context;
+using ContractMonthlyClaimSystem.Context;
 using System.Globalization;
-using Contract_Monthly_Claim_System.Models;
+using ContractMonthlyClaimSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
@@ -17,7 +17,7 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System.Globalization;
 
-namespace Contract_Monthly_Claim_System.Controllers
+namespace ContractMonthlyClaimSystem.Controllers
 {
     public class HomeController : Controller
     {

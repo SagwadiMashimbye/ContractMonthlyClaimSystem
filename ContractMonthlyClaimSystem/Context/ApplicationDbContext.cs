@@ -87,7 +87,7 @@ namespace ContractMonthlyClaimSystem.Context
             // Configure TotalApprovedClaims column type
             modelBuilder.Entity<ReportMetadata>()
                 .Property(r => r.TotalApprovedClaims)
-                .HasColumnType("decimal(18,2)")
+                .HasColumnType("decimal(18,2)");
 
         }
     }
