@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ContractMonthlyClaimSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class UpdateDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,6 +26,23 @@ namespace ContractMonthlyClaimSystem.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AcademicManagers", x => x.ManagerID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "HRs",
+                columns: table => new
+                {
+                    HRID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    HRName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HRSurname = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HREmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HRPhone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HRPassword = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HRs", x => x.HRID);
                 });
 
             migrationBuilder.CreateTable(
@@ -50,8 +67,8 @@ namespace ContractMonthlyClaimSystem.Migrations
                 columns: table => new
                 {
                     ModuleCode = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ModuleName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ModuleName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -200,6 +217,45 @@ namespace ContractMonthlyClaimSystem.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ReportMetadata",
+                columns: table => new
+                {
+                    ReportId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ReportName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReportType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateGenerated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TotalApprovedClaims = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ClaimID = table.Column<int>(type: "int", nullable: true),
+                    LecturerID = table.Column<int>(type: "int", nullable: true),
+                    ApprovalID = table.Column<int>(type: "int", nullable: true),
+                    GeneratedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReportMetadata", x => x.ReportId);
+                    table.ForeignKey(
+                        name: "FK_ReportMetadata_ApprovalProcesses_ApprovalID",
+                        column: x => x.ApprovalID,
+                        principalTable: "ApprovalProcesses",
+                        principalColumn: "ApprovalID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ReportMetadata_Claims_ClaimID",
+                        column: x => x.ClaimID,
+                        principalTable: "Claims",
+                        principalColumn: "ClaimID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ReportMetadata_Lecturers_LecturerID",
+                        column: x => x.LecturerID,
+                        principalTable: "Lecturers",
+                        principalColumn: "LecturerID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_ApprovalProcesses_ClaimID",
                 table: "ApprovalProcesses",
@@ -226,6 +282,21 @@ namespace ContractMonthlyClaimSystem.Migrations
                 column: "ModuleCode");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ReportMetadata_ApprovalID",
+                table: "ReportMetadata",
+                column: "ApprovalID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReportMetadata_ClaimID",
+                table: "ReportMetadata",
+                column: "ClaimID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReportMetadata_LecturerID",
+                table: "ReportMetadata",
+                column: "LecturerID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SupportingDocuments_ClaimID",
                 table: "SupportingDocuments",
                 column: "ClaimID");
@@ -235,10 +306,13 @@ namespace ContractMonthlyClaimSystem.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ApprovalProcesses");
+                name: "ClaimsModules");
 
             migrationBuilder.DropTable(
-                name: "ClaimsModules");
+                name: "HRs");
+
+            migrationBuilder.DropTable(
+                name: "ReportMetadata");
 
             migrationBuilder.DropTable(
                 name: "SupportingDocuments");
@@ -247,16 +321,19 @@ namespace ContractMonthlyClaimSystem.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "AcademicManagers");
-
-            migrationBuilder.DropTable(
-                name: "ProgrammeCoordinators");
-
-            migrationBuilder.DropTable(
                 name: "Modules");
 
             migrationBuilder.DropTable(
+                name: "ApprovalProcesses");
+
+            migrationBuilder.DropTable(
+                name: "AcademicManagers");
+
+            migrationBuilder.DropTable(
                 name: "Claims");
+
+            migrationBuilder.DropTable(
+                name: "ProgrammeCoordinators");
 
             migrationBuilder.DropTable(
                 name: "Lecturers");

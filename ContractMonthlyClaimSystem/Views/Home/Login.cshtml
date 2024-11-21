@@ -103,6 +103,20 @@
         margin-bottom: 1rem;
         border-radius: 5px;
         font-family: 'Poppins', sans-serif;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transition effect */
+    }
+
+    .password-input {
+        position: relative; /* Positioning for toggle icon */
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #4a148c;
     }
 
     .login-btn {

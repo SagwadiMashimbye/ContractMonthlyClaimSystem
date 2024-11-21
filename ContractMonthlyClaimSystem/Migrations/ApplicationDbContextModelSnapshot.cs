@@ -152,6 +152,39 @@ namespace ContractMonthlyClaimSystem.Migrations
                     b.ToTable("ClaimsModules");
                 });
 
+            modelBuilder.Entity("ContractMonthlyClaimSystem.Models.HR", b =>
+                {
+                    b.Property<int>("HRID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HRID"));
+
+                    b.Property<string>("HREmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HRName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HRPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HRPhone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HRSurname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("HRID");
+
+                    b.ToTable("HRs");
+                });
+
             modelBuilder.Entity("ContractMonthlyClaimSystem.Models.Lecturer", b =>
                 {
                     b.Property<int>("LecturerID")
@@ -192,11 +225,13 @@ namespace ContractMonthlyClaimSystem.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("ModuleName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("ModuleCode");
 
@@ -234,6 +269,56 @@ namespace ContractMonthlyClaimSystem.Migrations
                     b.HasKey("CoordinatorID");
 
                     b.ToTable("ProgrammeCoordinators");
+                });
+
+            modelBuilder.Entity("ContractMonthlyClaimSystem.Models.ReportMetadata", b =>
+                {
+                    b.Property<int>("ReportId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReportId"));
+
+                    b.Property<int?>("ApprovalID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ClaimID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateGenerated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GeneratedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("LecturerID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReportName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReportType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalApprovedClaims")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("ReportId");
+
+                    b.HasIndex("ApprovalID");
+
+                    b.HasIndex("ClaimID");
+
+                    b.HasIndex("LecturerID");
+
+                    b.ToTable("ReportMetadata");
                 });
 
             modelBuilder.Entity("ContractMonthlyClaimSystem.Models.SupportingDocuments", b =>
@@ -351,6 +436,30 @@ namespace ContractMonthlyClaimSystem.Migrations
                     b.Navigation("Module");
                 });
 
+            modelBuilder.Entity("ContractMonthlyClaimSystem.Models.ReportMetadata", b =>
+                {
+                    b.HasOne("ContractMonthlyClaimSystem.Models.ApprovalProcess", "ApprovalProcess")
+                        .WithMany("ReportMetadata")
+                        .HasForeignKey("ApprovalID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ContractMonthlyClaimSystem.Models.Claims", "Claims")
+                        .WithMany("ReportMetadata")
+                        .HasForeignKey("ClaimID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ContractMonthlyClaimSystem.Models.Lecturer", "Lecturer")
+                        .WithMany("ReportMetadata")
+                        .HasForeignKey("LecturerID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ApprovalProcess");
+
+                    b.Navigation("Claims");
+
+                    b.Navigation("Lecturer");
+                });
+
             modelBuilder.Entity("ContractMonthlyClaimSystem.Models.SupportingDocuments", b =>
                 {
                     b.HasOne("ContractMonthlyClaimSystem.Models.Claims", "Claims")
@@ -367,11 +476,18 @@ namespace ContractMonthlyClaimSystem.Migrations
                     b.Navigation("ApprovalProcesses");
                 });
 
+            modelBuilder.Entity("ContractMonthlyClaimSystem.Models.ApprovalProcess", b =>
+                {
+                    b.Navigation("ReportMetadata");
+                });
+
             modelBuilder.Entity("ContractMonthlyClaimSystem.Models.Claims", b =>
                 {
                     b.Navigation("ApprovalProcesses");
 
                     b.Navigation("ClaimsModules");
+
+                    b.Navigation("ReportMetadata");
 
                     b.Navigation("SupportingDocuments");
                 });
@@ -379,6 +495,8 @@ namespace ContractMonthlyClaimSystem.Migrations
             modelBuilder.Entity("ContractMonthlyClaimSystem.Models.Lecturer", b =>
                 {
                     b.Navigation("Claims");
+
+                    b.Navigation("ReportMetadata");
                 });
 
             modelBuilder.Entity("ContractMonthlyClaimSystem.Models.Module", b =>

@@ -21,6 +21,10 @@
             color: #4a148c;
         }
 
+        .container {
+            flex: 1; /* Allow the main content area to grow */
+        }
+
         /* Navbar Styles */
         .navbar {
             background-color: #ce93d8;
@@ -36,9 +40,12 @@
         }
 
             .navbar-brand:hover {
-                color: #DE1B38;
+                color: #6a0080;
             }
 
+            .navbar-brand:active {
+                transform: scale(1.05); /* Scale effect on click */
+            }
         .nav-link {
             color: #4a148c;
             font-weight: 500;
@@ -145,18 +152,19 @@
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    Contract System
+                    <i class="fas fa-file-invoice"></i> Contract Monthly
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
                         aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                    <i class="fas fa-bars" style="color: #4a148c;"></i> <!-- Burger icon -->
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+
                         @if (User.IsInRole("Lecturer"))
                         {
                             <li class="nav-item">
@@ -165,21 +173,73 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Track">Track Status</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                            </li>
                         }
-                        else if (User.IsInRole("Programme Coordinator") || User.IsInRole("Academic Manager"))
+                        else if (User.IsInRole("Programme Coordinator"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Home" asp-action="VerifyClaims">Verify Claims</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="ClosedClaims">Closed Claims</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                            </li>
                         }
+                        else if (User.IsInRole("Academic Manager"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="VerifyClaims">Verify Claims</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="ClosedClaims">Closed Claims</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                            </li>
+                        }
+                        else if (User.IsInRole("HR"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Register">Register Lecturer</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="RegisterC">Register Programme Coordinator</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="RegisterM">Register Academic Manager</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="ManageModules">Manage Modules</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="ManageUsers">Manage Users</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="ManageClaims">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                            </li>
+                        }
+                        else
+                        {
+                            // Add links for Guest
+                        }
+
                         <li class="nav-item dropdown">
                             @if (User.Identity.IsAuthenticated)
                             {
                                 var nameParts = User.Identity.Name.Split(' ');
-                                var initials = nameParts.Length >= 2 ? $"{nameParts[0][0]}{nameParts[1][1]}" : $"{nameParts[0][0]}";
+                                var initials = nameParts.Length >= 2
+                                ? $"{nameParts[0][0].ToString().ToUpper()}{nameParts[1][0].ToString().ToUpper()}"
+                                : $"{nameParts[0][0].ToString().ToUpper()}";
 
                                 <a class="profile-circle dropdown-toggle" href="#" id="profileDropdown"
-                                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                   role="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="toggleDropdown(event)">
                                     @initials
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
@@ -201,15 +261,15 @@
         </nav>
     </header>
 
-    <div class="container">
+    <div class="container mt-5">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer>
+    <footer class="border-top footer text-muted mt-auto">
         <div class="container">
-            &copy; 2024 - Contract Monthly Claim System
+            &copy; 2024 - Contract Monthly Claim System - Sagwadi Mashimbye
         </div>
     </footer>
 
@@ -217,5 +277,17 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        // Function to toggle dropdown visibility
+        function toggleDropdown(event) {
+            const dropdown = event.currentTarget.nextElementSibling;
+            dropdown.classList.toggle('show');
+            // Close other dropdowns if open
+            document.querySelectorAll('.dropdown-menu').forEach((menu) => {
+                if (menu !== dropdown) menu.classList.remove('show');
+            });
+        }
+    </script>
 </body>
 </html>
