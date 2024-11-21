@@ -1,5 +1,6 @@
-using ContractMonthlyClaimSystem.Context;
-using ContractMonthlyClaimSystem.Models;
+using Contract_Monthly_Claim_System.Context;
+using System.Globalization;
+using Contract_Monthly_Claim_System.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
@@ -11,8 +12,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using ContractMonthlyClaimSystem.Context;
-using ContractMonthlyClaimSystem.Models;
+using System.Reflection.Metadata;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System.Globalization;
 
 namespace Contract_Monthly_Claim_System.Controllers
 {
@@ -26,6 +29,368 @@ namespace Contract_Monthly_Claim_System.Controllers
         {
             _logger = logger;
             _context = context;
+        }
+
+        public IActionResult ManageModules()
+        {
+            var modules = _context.Modules.ToList();
+            return View(modules);
+        }
+
+        public IActionResult AddModule()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public IActionResult AddModule(Module module)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Modules.Add(module);
+                _context.SaveChanges();
+                TempData["Message"] = "Module added successfully!";
+                return RedirectToAction("ManageModules");
+            }
+            return View("ManageModules", _context.Modules.ToList());
+        }
+
+        public IActionResult EditModule(string moduleCode)
+        {
+            var module = _context.Modules.Find(moduleCode);
+            if (module == null) return NotFound();
+            return View(module);
+        }
+
+        [HttpPost]
+        public IActionResult EditModule(Module module)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Modules.Update(module);
+                _context.SaveChanges();
+                TempData["Message"] = "Module updated successfully!";
+                return RedirectToAction("ManageModules");
+            }
+            return View(module);
+        }
+
+        public IActionResult DeleteModule(string moduleCode)
+        {
+            var module = _context.Modules.Find(moduleCode);
+            if (module == null) return NotFound();
+            _context.Modules.Remove(module);
+            _context.SaveChanges();
+            TempData["Message"] = "Module deleted successfully!";
+            return RedirectToAction("ManageModules");
+        }
+
+        public async Task<IActionResult> ClosedClaims()
+        {
+            // Retrieve claims that are either approved or rejected
+            var closedClaims = await _context.Claims
+                                             .Include(c => c.Lecturer) // Ensure Lecturer is loaded
+                                             .Include(c => c.ClaimsModules)
+                                                 .ThenInclude(cm => cm.Module) // Include related modules
+                                             .Include(c => c.SupportingDocuments) // Include documents
+                                             .Include(c => c.ApprovalProcesses) // Include approvals
+                                             .Where(c => c.Status == "Approved" || c.Status == "Rejected")
+                                             .ToListAsync();
+
+            // Pass the closed claims to the view
+            return View(closedClaims);
+        }
+
+        public IActionResult ManageUsers()
+        {
+            var viewModel = new EditViewModel
+            {
+                Lecturers = _context.Lecturers.ToList(),
+                ProgrammeCoordinators = _context.ProgrammeCoordinators.ToList(),
+                AcademicManagers = _context.AcademicManagers.ToList()
+            };
+            return View(viewModel);
+        }
+
+        public IActionResult EditUser(int id, string role)
+        {
+            var viewModel = new EditViewModel
+            {
+                Role = role // Set the role here
+            };
+
+            switch (role)
+            {
+                case "Lecturer":
+                    viewModel.Lecturer = _context.Lecturers.FirstOrDefault(l => l.LecturerID == id);
+                    viewModel.Role = "Lecturer";
+                    break;
+                case "ProgrammeCoordinator":
+                    viewModel.ProgrammeCoordinator = _context.ProgrammeCoordinators.FirstOrDefault(pc => pc.CoordinatorID == id);
+                    viewModel.Role = "ProgrammeCoordinator";
+                    break;
+                case "AcademicManager":
+                    viewModel.AcademicManager = _context.AcademicManagers.FirstOrDefault(am => am.ManagerID == id);
+                    viewModel.Role = "AcademicManager";
+                    break;
+            }
+
+            if (viewModel.Lecturer == null && viewModel.ProgrammeCoordinator == null && viewModel.AcademicManager == null)
+            {
+                return NotFound();
+            }
+
+            return View("EditUser", viewModel);
+        }
+
+
+        [HttpPost]
+        public IActionResult EditUser(EditViewModel model)
+        {
+            Console.WriteLine("EditUser POST method reached.");
+            foreach (var modelState in ModelState)
+            {
+                foreach (var error in modelState.Value.Errors)
+                {
+                    Console.WriteLine($"Key: {modelState.Key}, Error: {error.ErrorMessage}");
+                }
+            }
+            // Debugging output
+            Console.WriteLine($"Role: {model.Role}");
+            Console.WriteLine($"AcademicManager: {model.AcademicManager != null}");
+            Console.WriteLine($"ProgrammeCoordinator: {model.ProgrammeCoordinator != null}");
+            Console.WriteLine($"LecturerID: {model.Lecturer?.LecturerID}");
+            if (ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList();
+                Console.WriteLine($"Validation errors: {string.Join(", ", errors)}");
+                switch (model.Role)
+                {
+                    case "Lecturer":
+                        var lecturer = _context.Lecturers.FirstOrDefault(l => l.LecturerID == model.Lecturer.LecturerID);
+                        if (lecturer != null)
+                        {
+                            lecturer.LecturerName = model.Lecturer.LecturerName;
+                            lecturer.LecturerSurname = model.Lecturer.LecturerSurname;
+                            lecturer.LecturerEmail = model.Lecturer.LecturerEmail;
+                            lecturer.LecturerPhone = model.Lecturer.LecturerPhone;
+                            _context.Lecturers.Update(lecturer);
+                        }
+                        break;
+                    case "ProgrammeCoordinator":
+                        var coordinator = _context.ProgrammeCoordinators.FirstOrDefault(pc => pc.CoordinatorID == model.ProgrammeCoordinator.CoordinatorID);
+                        if (coordinator != null)
+                        {
+                            coordinator.CoordinatorName = model.ProgrammeCoordinator.CoordinatorName;
+                            coordinator.CoordinatorSurname = model.ProgrammeCoordinator.CoordinatorSurname;
+                            coordinator.CoordinatorEmail = model.ProgrammeCoordinator.CoordinatorEmail;
+                            coordinator.CoordinatorPhone = model.ProgrammeCoordinator.CoordinatorPhone;
+                            _context.ProgrammeCoordinators.Update(coordinator);
+                        }
+                        break;
+                    case "AcademicManager":
+                        var manager = _context.AcademicManagers.FirstOrDefault(am => am.ManagerID == model.AcademicManager.ManagerID);
+                        if (manager != null)
+                        {
+                            manager.ManagerName = model.AcademicManager.ManagerName;
+                            manager.ManagerSurname = model.AcademicManager.ManagerSurname;
+                            manager.ManagerEmail = model.AcademicManager.ManagerEmail;
+                            manager.ManagerPhone = model.AcademicManager.ManagerPhone;
+                            _context.AcademicManagers.Update(manager);
+                        }
+                        break;
+                    default:
+                        return NotFound();
+                }
+
+                _context.SaveChanges();
+                TempData["Message"] = "User details updated successfully!";
+                return RedirectToAction("ManageUsers");
+            }
+
+            return View("EditUser", model);
+        }
+
+        // Action for the ManageClaims page
+        public IActionResult ManageClaims()
+        {
+            var model = new ManageClaimsViewModel();
+
+            // Fetch only approved claims from the database
+            model.ApprovedClaims = _context.Claims
+                .Where(c => c.Status == "Approved")
+                .ToList();
+
+            return View(model);
+        }
+
+
+        // Action to generate a report
+        [HttpPost]
+        public IActionResult GenerateInvoice(List<int> claimIds)
+        {
+            if (claimIds == null || claimIds.Count == 0)
+            {
+                _logger.LogWarning("No claims were selected for invoice generation.");
+                TempData["ErrorMessage"] = "No claims selected.";
+                return RedirectToAction("ManageClaims");
+            }
+
+            foreach (var claimId in claimIds)
+            {
+                _logger.LogInformation($"Attempting to generate invoice for Claim ID: {claimId}");
+
+                // Check if an invoice already exists for this claim
+                bool invoiceExists = _context.ReportMetadata.Any(r => r.ClaimID == claimId && r.ReportType == "Invoice");
+                if (invoiceExists)
+                {
+                    _logger.LogInformation($"Invoice already exists for Claim ID: {claimId}. Skipping generation.");
+                    continue;
+                }
+
+                var claim = _context.Claims
+                    .Include(c => c.Lecturer)
+                    .Include(c => c.ApprovalProcesses)
+                        .ThenInclude(ap => ap.Coordinator)
+                    .Include(c => c.ApprovalProcesses)
+                        .ThenInclude(ap => ap.Manager)
+                    .FirstOrDefault(c => c.ClaimID == claimId);
+
+                if (claim == null || claim.TotalClaimAmount <= 0)
+                {
+                    _logger.LogWarning($"Invalid or zero claim amount for Claim ID: {claimId}. Skipping generation.");
+                    TempData["ErrorMessage"] = "Invalid claim data. Please check your input.";
+                    continue;
+                }
+
+                var latestApproval = claim.ApprovalProcesses
+                    .OrderByDescending(ap => ap.ApprovalDate)
+                    .FirstOrDefault();
+
+                var invoiceFilePath = GenerateInvoicePdf(claim);
+
+                var reportMetadata = new ReportMetadata
+                {
+                    ReportName = $"Invoice_{claim.ClaimID}.pdf",
+                    ReportType = "Invoice",
+                    DateGenerated = DateTime.Now,
+                    FilePath = invoiceFilePath,
+                    ClaimID = claim.ClaimID,
+                    TotalApprovedClaims = claim.TotalClaimAmount,
+                    LecturerID = claim.LecturerID,
+                    ApprovalID = latestApproval?.ApprovalID,
+                    GeneratedBy = User.Identity.Name
+                };
+
+                _context.ReportMetadata.Add(reportMetadata);
+            }
+
+            var changesSaved = _context.SaveChanges() > 0;
+            TempData["Message"] = changesSaved ? "Invoices generated successfully!" : "Failed to save invoice metadata.";
+
+            return RedirectToAction("ViewInvoices");
+        }
+
+        // Generate PDF invoice for each claim
+        private string GenerateInvoicePdf(Claims claim)
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/invoices", $"Invoice_{claim.ClaimID}.pdf");
+
+            try
+            {
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    var document = new iTextSharp.text.Document();
+                    PdfWriter.GetInstance(document, stream);
+                    document.Open();
+
+                    // Add content to the PDF
+                    document.Add(new Paragraph($"Invoice ID: {claim.ClaimID}"));
+                    document.Add(new Paragraph($"Lecturer: {claim.Lecturer?.LecturerName}"));
+                    document.Add(new Paragraph($"Hours Worked: {claim.HoursWorked}"));
+                    document.Add(new Paragraph($"Hourly Rate: {claim.HourlyRate.ToString("C", new CultureInfo("en-ZA"))}"));
+                    document.Add(new Paragraph($"Total Amount: {claim.TotalClaimAmount.ToString("C", new CultureInfo("en-ZA"))}"));
+                    document.Add(new Paragraph($"Generated On: {DateTime.Now}"));
+
+                    var latestApproval = claim.ApprovalProcesses
+                        .OrderByDescending(ap => ap.ApprovalDate)
+                        .FirstOrDefault();
+
+                    if (latestApproval != null)
+                    {
+                        document.Add(new Paragraph($"Approved By:"));
+                        document.Add(new Paragraph($"  Coordinator: {latestApproval.Coordinator?.CoordinatorName ?? "N/A"}"));
+                        document.Add(new Paragraph($"  Manager: {latestApproval.Manager?.ManagerName ?? "N/A"}"));
+                        document.Add(new Paragraph($"Approval Date: {latestApproval.ApprovalDate.ToShortDateString()}"));
+                    }
+
+                    document.Close();
+                }
+                _logger.LogInformation($"Invoice PDF generated successfully at: {filePath}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating invoice PDF.");
+            }
+
+            return filePath;
+        }
+
+        // Action to download a report by ID
+        public IActionResult DownloadInvoice(int id)
+        {
+            var report = _context.ReportMetadata.Find(id);
+            if (report == null || report.ReportType != "Invoice")
+            {
+                _logger.LogWarning($"Invoice not found for ID: {id}");
+                TempData["ErrorMessage"] = "Invoice not found.";
+                return RedirectToAction("ViewInvoices");
+            }
+
+            var filePath = report.FilePath;
+            if (!System.IO.File.Exists(filePath))
+            {
+                _logger.LogError($"File not found at path: {filePath}");
+                TempData["ErrorMessage"] = "The requested invoice file is missing.";
+                return RedirectToAction("ViewInvoices");
+            }
+
+            return PhysicalFile(filePath, "application/pdf", report.ReportName);
+        }
+
+        // Action to view invoices
+        public IActionResult ViewInvoices()
+        {
+            var invoices = _context.ReportMetadata
+                .Where(r => r.ReportType == "Invoice")
+                .Include(r => r.Claims)
+                    .ThenInclude(c => c.Lecturer) // Include Lecturer from Claims
+                .Include(r => r.ApprovalProcess) // Include ApprovalProcess
+                    .ThenInclude(ap => ap.Coordinator) // Include Coordinator in ApprovalProcess
+                .Include(r => r.ApprovalProcess)
+                    .ThenInclude(ap => ap.Manager) // Include Manager in ApprovalProcess
+                .ToList();
+
+            return View(invoices);
+        }
+
+
+        // Action to update lecturer information
+        [HttpPost]
+        public IActionResult UpdateLecturer(Lecturer lecturer)
+        {
+            if (ModelState.IsValid)
+            {
+                // Logic to update lecturer information in the database
+                // Example: Call a service to update lecturer
+                TempData["Message"] = "Lecturer updated successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Error updating lecturer. Please check the input.";
+            }
+            return RedirectToAction("ManageClaims");
         }
 
         // GET: Submit Claims
@@ -165,7 +530,7 @@ namespace Contract_Monthly_Claim_System.Controllers
             return View();
         }
 
-        // Login
+        // POST: Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string Username, string Password, bool RememberMe)
@@ -196,7 +561,7 @@ namespace Contract_Monthly_Claim_System.Controllers
         new Claim(ClaimTypes.NameIdentifier, user.userID.ToString()) // Add the user ID claim
     };
 
-            // Add specific claims for Coordinators and Managers
+            // Add role-specific claims for Coordinators, Managers, and HR
             if (user.Role == "Programme Coordinator")
             {
                 claims.Add(new Claim("CoordinatorID", user.userID.ToString())); // Add CoordinatorID claim
@@ -204,6 +569,10 @@ namespace Contract_Monthly_Claim_System.Controllers
             else if (user.Role == "Academic Manager")
             {
                 claims.Add(new Claim("ManagerID", user.userID.ToString())); // Add ManagerID claim
+            }
+            else if (user.Role == "HR")
+            {
+                claims.Add(new Claim("HRID", user.userID.ToString())); // Add HRID claim
             }
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -317,6 +686,56 @@ namespace Contract_Monthly_Claim_System.Controllers
             return View(coordinator);
         }
 
+        // GET: RegisterH
+        public IActionResult RegisterH()
+        {
+            return View();
+        }
+
+        // POST: RegisterH
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterH(HR hr)
+        {
+            // Check if email already exists in the Users table
+            var existingUser = await _context.Users.SingleOrDefaultAsync(u => u.Username == hr.HREmail);
+
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("HREmail", "This email is already registered.");
+                return View(hr);
+            }
+
+            if (ModelState.IsValid)
+            {
+                // Hash the password
+                var (hashedPassword, salt) = HashPassword(hr.HRPassword);
+                hr.HRPassword = hashedPassword;
+
+                // Create a new user entry
+                var user = new Users
+                {
+                    Username = hr.HREmail,
+                    PasswordHash = hashedPassword,
+                    Salt = Convert.ToBase64String(salt),
+                    Role = "HR"
+                };
+
+                // Add user and HR details to the database
+                await _context.Users.AddAsync(user);
+                await _context.SaveChangesAsync();
+
+                _context.HRs.Add(hr);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "HR account created successfully!";
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View(hr);
+        }
+
+
         public async Task<IActionResult> About()
         {
             var userEmail = User.Identity.Name; // Fetch the logged-in user's email
@@ -354,17 +773,30 @@ namespace Contract_Monthly_Claim_System.Controllers
                     .SingleOrDefaultAsync(l => l.ManagerEmail == userEmail);
                 if (manager == null)
                 {
-                    TempData["ErrorMessage"] = "Lecturer not found.";
+                    TempData["ErrorMessage"] = "Academic Manager not found.";
                     return RedirectToAction("Index");
                 }
 
-                model.AcademicManager = manager; // Add lecturer details to the model
+                model.AcademicManager = manager; // Add Academic Manager details to the model
+            }
+            else if (User.IsInRole("HR"))
+            {
+                var hr = await _context.HRs
+                    .SingleOrDefaultAsync(h => h.HREmail == userEmail);
+                if (hr == null)
+                {
+                    TempData["ErrorMessage"] = "HR not found.";
+                    return RedirectToAction("Index");
+                }
+
+                model.HR = hr; // Add HR details to the model
             }
             else
             {
                 TempData["ErrorMessage"] = "User role not recognized.";
                 return RedirectToAction("Index");
             }
+
             return View(model); // Return the model to the view
         }
 
@@ -419,31 +851,48 @@ namespace Contract_Monthly_Claim_System.Controllers
 
                     model.ProgrammeCoordinator = coordinator;
                 }
-                //Academic Manager
                 else if (User.IsInRole("Academic Manager"))
                 {
-                    // Fetch the program coordinator details from the database asynchronously
+                    // Fetch the academic manager details from the database asynchronously
                     var manager = await _context.AcademicManagers
                         .SingleOrDefaultAsync(pc => pc.ManagerEmail == userEmail);
 
                     if (manager == null)
                     {
-                        // Coordinator not found in the database
+                        // Academic Manager not found in the database
                         TempData["ErrorMessage"] = "Academic Manager not found in the system.";
                         return View(model); // Return the view with an error message
                     }
 
                     model.AcademicManager = manager;
                 }
+                else if (User.IsInRole("HR"))
+                {
+                    // Fetch the HR details from the database asynchronously
+                    var hr = await _context.HRs
+                        .SingleOrDefaultAsync(h => h.HREmail == userEmail);
+
+                    if (hr == null)
+                    {
+                        // HR not found in the database
+                        TempData["ErrorMessage"] = "HR not found in the system.";
+                        return View(model); // Return the view with an error message
+                    }
+
+                    model.HR = hr; // Add HR details to the model
+                }
                 else
                 {
                     TempData["ErrorMessage"] = "User role not recognized.";
                     return View(model); // Return the view with an error message
                 }
-                return View(model); // Return the view with appropriate user details (lecturer or coordinator)
+
+                return View(model); // Return the view with the appropriate user details
             }
+
             return View(); // Return the guest view if not authenticated
         }
+
 
         public async Task<IActionResult> VerifyClaims()
         {
@@ -644,7 +1093,6 @@ namespace Contract_Monthly_Claim_System.Controllers
         {
             return RedirectToAction("TrackClaims");
         }
-
 
         // GET: Register (Displays the registration form)
         public IActionResult Register()
