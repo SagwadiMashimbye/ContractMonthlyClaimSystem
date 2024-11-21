@@ -19,6 +19,8 @@ namespace ContractMonthlyClaimSystem.Context
         public DbSet<Module> Modules { get; set; }
         public DbSet<ClaimsModules> ClaimsModules { get; set; }
         public DbSet<Users> Users { get; set; }
+        public DbSet<HR> HRs { get; set; }
+        public DbSet<ReportMetadata> ReportMetadata { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,6 +42,12 @@ namespace ContractMonthlyClaimSystem.Context
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ClaimsModules>()
+                .HasOne(cm => cm.Claims)
+                .WithMany(c => c.ClaimsModules)
+                .HasForeignKey(cm => cm.ClaimID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ClaimsModules>()
                 .HasOne(cm => cm.Module)
                 .WithMany(m => m.ClaimsModules)
                 .HasForeignKey(cm => cm.ModuleCode)
@@ -56,6 +64,30 @@ namespace ContractMonthlyClaimSystem.Context
                 .WithMany(pc => pc.ApprovalProcesses)
                 .HasForeignKey(a => a.CoordinatorID) // Ensure you have this foreign key defined
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Add foreign key relationships for ReportMetadata
+            modelBuilder.Entity<ReportMetadata>()
+                .HasOne(rm => rm.Claims)
+                .WithMany(c => c.ReportMetadata)
+                .HasForeignKey(rm => rm.ClaimID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ReportMetadata>()
+                .HasOne(rm => rm.Lecturer)
+                .WithMany(l => l.ReportMetadata)
+                .HasForeignKey(rm => rm.LecturerID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ReportMetadata>()
+                .HasOne(rm => rm.ApprovalProcess)
+                .WithMany(ap => ap.ReportMetadata)
+                .HasForeignKey(rm => rm.ApprovalID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure TotalApprovedClaims column type
+            modelBuilder.Entity<ReportMetadata>()
+                .Property(r => r.TotalApprovedClaims)
+                .HasColumnType("decimal(18,2)")
 
         }
     }

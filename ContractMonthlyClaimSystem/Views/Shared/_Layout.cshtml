@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
         /* General Styles */
@@ -34,17 +35,26 @@
             font-weight: 600;
         }
 
+            .navbar-brand:hover {
+                color: #DE1B38;
+            }
+
         .nav-link {
             color: #4a148c;
             font-weight: 500;
             margin-right: 20px;
         }
 
+            .nav-link:hover {
+                color: #DE1B38;
+                transform: scale(1.05); /* Scale effect on hover */
+            }
+
         .navbar-toggler {
             border-color: #4a148c;
         }
 
-        .profile-circle {
+        .navbar-btn, .profile-circle {
             background-color: #4a148c;
             color: #fff;
             font-size: 16px;
@@ -54,12 +64,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-left: 20px;
+            border-radius: 50%;
             cursor: pointer;
+            position: relative;
+            font-weight: 600;
+            padding: 10px 0;
         }
 
-        .profile-circle:hover {
-            background-color: #6a0080;
-        }
+            .profile-circle:hover {
+                background-color: #6a0080;
+            }
 
         /* Content Area */
         .container {
@@ -89,9 +105,9 @@
             border: none;
         }
 
-        .btn-primary:hover {
-            background-color: #6a0080;
-        }
+            .btn-primary:hover {
+                background-color: #6a0080;
+            }
 
         /* Responsive Adjustments */
         @@media (max-width: 768px) {
