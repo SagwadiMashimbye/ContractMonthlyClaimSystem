@@ -1,72 +1,75 @@
 ﻿@model IEnumerable<Claims>
 
-@{
+    @{
     ViewData["Title"] = "Verify Claims";
-}
+    }
 
-<div class="container">
-    <h1 class="text-center">Verify Claims</h1>
+    <div class="container">
+        <h1 class="text-center animated-title">Verify Claims</h1>
 
-    <div class="view-toggle mb-4">
-        <button id="listViewBtn" class="btn btn-outline-primary active-btn">List View</button>
-        <button id="gridViewBtn" class="btn btn-outline-secondary">Grid View</button>
-    </div>
+        <div class="view-toggle mb-3">
+            <button id="listViewBtn" class="btn btn-outline-primary active-btn">List View</button>
+            <button id="gridViewBtn" class="btn btn-outline-secondary">Grid View</button>
+        </div>
 
-    <div id="claimsContainer" class="row list-view">
-        @if (Model != null && Model.Any())
+        <div id="claimsContainer" class="row list-view">
+            @if (Model != null && Model.Any())
         {
             @foreach (var claim in Model)
             {
-                <div class="col-md-12 mb-4 claim-item">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Claim ID: @claim.ClaimID</h5>
-                            <p><strong>Submitted by:</strong> @claim.Lecturer.LecturerName @claim.Lecturer.LecturerSurname</p>
-                            <p><strong>Modules:</strong> @string.Join(", ", claim.ClaimsModules.Select(m => m.Module.ModuleName))</p>
-                            <p><strong>Hours Worked:</strong> @claim.HoursWorked</p>
-                            <p><strong>Hourly Rate:</strong> R @claim.HourlyRate</p>
-                            <p><strong>Total Claim Amount:</strong> R @(claim.HoursWorked * claim.HourlyRate)</p>
-                            <p><strong>Status:</strong> <span class="status-text">@claim.Status</span></p>
-                            <p><strong>Additional Notes:</strong> @claim.AdditionalNotes</p>
-                            <p><strong>Submitted on:</strong> @claim.SubmissionDate.ToString("yyyy-MM-dd")</p>
-                            <p><strong>Submitted Documents:</strong></p>
-                            <ul>
-                                @foreach (var document in claim.SupportingDocuments)
+            <div class="col-md-12 col-lg-4 mb-4 claim-item animated-claim">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Claim ID: @claim.ClaimID</h5>
+                        <p><strong>Submitted by:</strong> @claim.Lecturer.LecturerName @claim.Lecturer.LecturerSurname</p>
+                        <p><strong>Modules:</strong> @string.Join(", ", claim.ClaimsModules.Select(m => m.Module.ModuleName))</p>
+                        <p><strong>Hours Worked:</strong> @claim.HoursWorked</p>
+                        <p><strong>Hourly Rate:</strong> R @claim.HourlyRate</p>
+                        <p><strong>Total Claim Amount:</strong> R @(claim.HoursWorked * claim.HourlyRate)</p>
+                        <p><strong>Status:</strong> <span class="status-text">@claim.Status</span></p>
+                        <p><strong>Additional Notes:</strong> @claim.AdditionalNotes</p>
+                        <p><strong>Submitted on:</strong> @claim.SubmissionDate.ToString("yyyy-MM-dd")</p>
+                        <p><strong>Submitted Documents:</strong></p>
+                        <ul>
+                            @foreach (var document in claim.SupportingDocuments)
                                 {
-                                    <li><a href="@Url.Content(document.FilePath)" target="_blank">@document.DocumentName</a></li>
+                            <li><a href="@Url.Content(document.FilePath)" target="_blank">@document.DocumentName</a></li>
                                 }
-                            </ul>
+                        </ul>
 
-                            @if (claim.Status == "Pending")
+                        @if (claim.Status == "Pending")
                             {
-                                <div class="d-flex justify-content-between mt-3">
-                                    <form asp-action="ApproveClaim" method="post" class="me-2">
-                                        <input type="hidden" name="claimId" value="@claim.ClaimID" />
-                                        <button type="submit" class="btn btn-success">Approve</button>
-                                    </form>
-                                    <form asp-action="RejectClaim" method="post" class="flex-grow-1">
-                                        <input type="hidden" name="claimId" value="@claim.ClaimID" />
-                                        <div class="form-group mt-2">
-                                            <label for="feedback">Provide Feedback:</label>
-                                            <textarea class="form-control" name="feedback" id="feedback" rows="2" required></textarea>
-                                        </div>
-                                        <button type="submit" class="btn btn-danger mt-2">Reject</button>
-                                    </form>
+                        <div class="button-group mt-3 d-flex">
+                            <form asp-action="ApproveClaim" method="post" class="w-50">
+                                <input type="hidden" name="claimId" value="@claim.ClaimID" />
+                                <button type="submit" class="btn btn-success">Approve</button>
+                            </form>
+
+                            <form asp-action="RejectClaim" method="post" class="reject-form w-50">
+                                <input type="hidden" name="claimId" value="@claim.ClaimID" />
+                                <button type="button" class="btn btn-danger toggle-feedback">Reject</button>
+                                <div class="feedback-container mt-2 d-none">
+                                    <label for="feedback" class="form-label">Provide Feedback:</label>
+                                    <textarea class="form-control" name="feedback" id="feedback" rows="2" required style="width: 100%;"></textarea>
+                                    <button type="submit" class="btn btn-danger mt-2">Submit Rejection</button>
                                 </div>
+                            </form>
+                        </div>
                             }
                             else if (claim.Status == "Rejected")
                             {
-                                <p><strong>Feedback:</strong> <span class="text-danger">@claim.RejectionFeedback</span></p>
+                        <p><strong>Feedback:</strong> <span class="text-danger">@claim.RejectionFeedback</span></p>
                             }
 
-                            <div class="progress mt-2">
-                                <div class="progress-bar @GetProgressBarClass(claim.Status)" role="progressbar" style="width: @(GetProgressPercentage(claim.Status))%" aria-valuenow="@GetProgressPercentage(claim.Status)" aria-valuemin="0" aria-valuemax="100">
-                                    @claim.Status
-                                </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar @GetProgressBarClass(claim.Status)" role="progressbar" style="width: @(GetProgressPercentage(claim.Status))%" aria-valuenow="@GetProgressPercentage(claim.Status)" aria-valuemin="0" aria-valuemax="100">
+                                <span class="dancing-text">@claim.Status</span>
+                                <div class="progress-bar-overlay"></div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
             }
         }
         else
@@ -77,10 +80,10 @@
                 </div>
             </div>
         }
+        </div>
     </div>
-</div>
 
-@functions {
+    @functions {
     private string GetProgressBarClass(string status)
     {
         return status switch
@@ -98,98 +101,106 @@
         {
             "Pending" => 50,
             "Approved" => 100,
-            "Rejected" => 95,
+            "Rejected" => 100,
             _ => 0
         };
     }
-}
-
-<style>
-    .list-view .claim-item {
-        display: block;
-        width: 100%;
     }
 
-    .grid-view .claim-item {
-        display: flex;
-        flex-direction: column;
-        width: calc(33.333% - 20px);
-        margin-right: 10px;
-        margin-left: 10px;
-    }
-
-    .card {
-        border: 1px solid #DE1B38;
-        border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        padding: 15px;
-        transition: transform 0.2s; /* Smooth transform for hover effect */
-    }
-
-        .card:hover {
-            transform: scale(1.02); /* Slight zoom effect on hover */
+    <style>
+        .list-view .claim-item {
+            display: block;
+            width: 100%;
         }
 
-    .card-body p {
-        margin-bottom: 5px; /* Reduced margin between <p> tags */
-    }
+        .grid-view .claim-item {
+            display: flex;
+            flex-direction: column;
+            width: calc(33.333% - 20px);
+            margin-right: 10px;
+            margin-left: 10px;
+        }
 
-    .card-title {
-        font-size: 1.5rem; /* Increased title font size */
-        margin-bottom: 10px;
-        color: #4a148c; /* Match color with theme */
-    }
+        .card {
+            border: 1px solid #DE1B38;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            transition: transform 0.2s; /* Smooth transform for hover effect */
+        }
 
-    .status-text {
-        font-weight: bold;
-        display: inline-block;
-        margin-bottom: 5px; /* Reduced margin */
-    }
+            .card:hover {
+                transform: scale(1.02); /* Slight zoom effect on hover */
+            }
 
-    .progress {
-        height: 1.25rem; /* Slightly reduced height for the progress bar */
-        margin-top: 0.75rem; /* Reduced top margin */
-    }
+        .card-body p {
+            margin-bottom: 5px; /* Reduced margin between <p> tags */
+        }
 
-    ul {
-        list-style-type: disc;
-        margin-left: 15px; /* Reduced left margin */
-        margin-bottom: 10px; /* Reduced space after the list */
-    }
+        .card-title {
+            font-size: 1.5rem; /* Increased title font size */
+            margin-bottom: 10px;
+            color: #4a148c; /* Match color with theme */
+        }
 
-    .form-group {
-        margin-bottom: 10px; /* Reduced margin for the form group */
-    }
+        .status-text {
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 5px; /* Reduced margin */
+        }
 
-    .view-toggle {
-        margin-bottom: 15px; /* Reduced margin for the toggle buttons */
-        display: flex;
-        justify-content: flex-end;
-    }
+        .progress {
+            height: 1.25rem; /* Slightly reduced height for the progress bar */
+            margin-top: 0.75rem; /* Reduced top margin */
+        }
 
-    .active-btn {
-        background-color: #DE1B38;
-        color: white;
-    }
+        ul {
+            list-style-type: disc;
+            margin-left: 15px; /* Reduced left margin */
+            margin-bottom: 10px; /* Reduced space after the list */
+        }
 
-    .btn {
-        margin-right: 5px;
-        margin-left: 5px;
-    }
-</style>
+        .form-group {
+            margin-bottom: 10px; /* Reduced margin for the form group */
+        }
 
-<script>
-    document.getElementById('listViewBtn').addEventListener('click', function () {
-        document.getElementById('claimsContainer').classList.remove('grid-view');
-        document.getElementById('claimsContainer').classList.add('list-view');
-        this.classList.add('active-btn');
-        document.getElementById('gridViewBtn').classList.remove('active-btn');
-    });
+        .view-toggle {
+            margin-bottom: 15px; /* Reduced margin for the toggle buttons */
+            display: flex;
+            justify-content: flex-end;
+        }
 
-    document.getElementById('gridViewBtn').addEventListener('click', function () {
-        document.getElementById('claimsContainer').classList.remove('list-view');
-        document.getElementById('claimsContainer').classList.add('grid-view');
-        this.classList.add('active-btn');
-        document.getElementById('listViewBtn').classList.remove('active-btn');
-    });
-</script>
+        .active-btn {
+            background-color: #DE1B38;
+            color: white;
+        }
+
+        .btn {
+            margin-right: 5px;
+            margin-left: 5px;
+        }
+    </style>
+
+    <script>
+        document.getElementById('listViewBtn').addEventListener('click', function () {
+            document.getElementById('claimsContainer').classList.remove('grid-view');
+            document.getElementById('claimsContainer').classList.add('list-view');
+            this.classList.add('active-btn');
+            document.getElementById('gridViewBtn').classList.remove('active-btn');
+        });
+
+        document.getElementById('gridViewBtn').addEventListener('click', function () {
+            document.getElementById('claimsContainer').classList.remove('list-view');
+            document.getElementById('claimsContainer').classList.add('grid-view');
+            this.classList.add('active-btn');
+            document.getElementById('listViewBtn').classList.remove('active-btn');
+        });
+
+        // Toggle feedback field for reject button
+        document.querySelectorAll('.toggle-feedback').forEach(button => {
+            button.addEventListener('click', function () {
+                this.nextElementSibling.classList.toggle('d-none');
+                // Optionally, add animations here if needed
+            });
+        });
+    </script>

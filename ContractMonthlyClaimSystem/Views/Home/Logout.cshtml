@@ -1,4 +1,4 @@
-﻿@{
+﻿@@{
     ViewData["Title"] = "Logout";
 }
 
@@ -14,8 +14,7 @@
 </head>
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Contract Monthly Claim System</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -29,11 +28,10 @@
         </div>
     </nav>
 
-    <!-- Logout Message -->
-    <div class="container logout-container text-center mt-5">
-        <h2 class="logout-title">You have been logged out.</h2>
-        <p class="logout-message">Thank you for using the Contract Monthly Claim System.</p>
-        <a class="btn btn-primary mt-4" href="@Url.Action("Login", "Home")">Login Again</a>
+    <div class="container text-center mt-5">
+        <h2>You have been logged out.</h2>
+        <p>Thank you for using the Contract Monthly Claim System.</p>
+        <a class="btn btn-primary" href="@Url.Action("Login", "Home")">Login Again</a>
     </div>
 
     <!-- Custom styles for the logout page -->

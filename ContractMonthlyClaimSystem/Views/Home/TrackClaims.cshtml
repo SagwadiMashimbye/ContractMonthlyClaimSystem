@@ -47,9 +47,9 @@
         cursor: pointer;
     }
 
-    .profile-circle:hover {
-        background-color: #6a0080;
-    }
+        .profile-circle:hover {
+            background-color: #6a0080;
+        }
 
     /* Content Area */
     .container {
@@ -79,9 +79,9 @@
         border: none;
     }
 
-    .btn-primary:hover {
-        background-color: #6a0080;
-    }
+        .btn-primary:hover {
+            background-color: #6a0080;
+        }
 
     /* Responsive Adjustments */
     @@media (max-width: 768px) {
@@ -177,94 +177,93 @@
 </style>
 
 @model List<ClaimSubmissionInfo>
-@using System.Security.Claims
-@using System.Linq
-@using ContractMonthlyClaimSystem.Context; 
+    @using System.Security.Claims
+    @using System.Linq
+    @using Contract_Monthly_Claim_System.Context;
 
-@inject ContractMonthlyClaimSystem.Context.ApplicationDbContext DbContext 
+    @inject Contract_Monthly_Claim_System.Context.ApplicationDbContext DbContext
 
-<div class="container">
-    <h1 class="text-center">Track Your Claims</h1>
+    <div class="container">
+        <h1 class="text-center animated-title">Track Your Claims</h1>
 
-    <div class="view-toggle mb-3">
-        <button id="listViewBtn" class="btn btn-outline-primary active-btn">List View</button>
-        <button id="gridViewBtn" class="btn btn-outline-secondary">Grid View</button>
-    </div>
+        <div class="view-toggle mb-3">
+            <button id="listViewBtn" class="btn btn-outline-primary active-btn">List View</button>
+            <button id="gridViewBtn" class="btn btn-outline-secondary">Grid View</button>
+        </div>
 
-    <div id="claimsContainer" class="row list-view">
-        @if (Model != null && Model.Any())
+        <div id="claimsContainer" class="row list-view">
+            @if (Model != null && Model.Any())
         {
-            // Get the user ID
+            // Logic to retrieve user's claims
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             int userId = int.Parse(userIdClaim);
-            // Retrieve the user's email
             var userEmail = DbContext.Users.FirstOrDefault(u => u.userID == userId)?.Username;
 
             if (userEmail != null)
             {
-                // Get the corresponding LecturerID using the user's email
                 var lecturerId = DbContext.Lecturers.FirstOrDefault(l => l.LecturerEmail == userEmail)?.LecturerID;
-
-                // Filter the claims based on the LecturerID
                 var userClaims = Model.Where(c => c.LecturerID == lecturerId);
 
                 if (!userClaims.Any())
                 {
-                    <div class="col-12">
-                        <div class="alert alert-info" role="alert">
-                            No claims found for you. Please submit your claims to track their status.
-                        </div>
-                    </div>
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    No claims found for you. Please submit your claims to track their status.
+                </div>
+            </div>
                 }
                 else
                 {
                     foreach (var submissionInfo in userClaims)
                     {
-                        <div class="col-md-12 mb-4 claim-item">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Claim ID: @submissionInfo.Claim.ClaimID</h5>
-                                    <p><strong>Status:</strong> <span class="status-text">@submissionInfo.Claim.Status</span></p>
-                                    <p><strong>Modules:</strong></p>
-                                    <ul>
-                                        @foreach (var module in submissionInfo.SelectedModules)
+            <div class="col-md-12 mb-4 claim-item animated-claim">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Claim ID: @submissionInfo.Claim.ClaimID</h5>
+                        <p><strong>Status:</strong> <span class="status-text">@submissionInfo.Claim.Status</span></p>
+                        <p><strong>Modules:</strong></p>
+                        <ul>
+                            @foreach (var module in submissionInfo.SelectedModules)
                                         {
-                                            <li>@module</li>
+                            <li>@module</li>
                                         }
-                                    </ul>
-                                    <p><strong>Hours Worked:</strong> @submissionInfo.Claim.HoursWorked</p>
-                                    <p><strong>Hourly Rate:</strong> R @submissionInfo.Claim.HourlyRate.ToString("F2")</p>
-                                    <p><strong>Total Amount:</strong> R @submissionInfo.Claim.TotalClaimAmount</p>
+                        </ul>
+                        <p><strong>Hours Worked:</strong> @submissionInfo.Claim.HoursWorked</p>
+                        <p><strong>Hourly Rate:</strong> R @submissionInfo.Claim.HourlyRate.ToString("F2")</p>
+                        <p><strong>Total Amount:</strong> R @submissionInfo.Claim.TotalClaimAmount</p>
 
-                                    @if (submissionInfo.ApprovalProcess != null)
+                        @if (submissionInfo.ApprovalProcess != null)
                                     {
-                                        <p><strong>Feedback:</strong> @submissionInfo.ApprovalProcess.Feedback</p>
-                                        <p><strong>Approved/Rejected On:</strong> @submissionInfo.ApprovalProcess.ApprovalDate.ToString("dd MMM yyyy")</p>
-                                        <p><strong>Program Coordinator:</strong> @submissionInfo.ApprovalProcess.Coordinator?.CoordinatorName @submissionInfo.ApprovalProcess.Coordinator?.CoordinatorSurname</p>
-                                        <p><strong>Academic Manager:</strong> @submissionInfo.ApprovalProcess.Manager?.ManagerName @submissionInfo.ApprovalProcess.Manager?.ManagerSurname</p>
+                        <p><strong>Feedback:</strong> @(string.IsNullOrEmpty(submissionInfo.ApprovalProcess.Feedback) ? "No feedback provided" : submissionInfo.ApprovalProcess.Feedback)</p>
+                        <p><strong>Approved/Rejected On:</strong> @submissionInfo.ApprovalProcess.ApprovalDate.ToString("dd MMM yyyy")</p>
+                        <p><strong>Program Coordinator:</strong> @submissionInfo.ApprovalProcess.Coordinator?.CoordinatorName @submissionInfo.ApprovalProcess.Coordinator?.CoordinatorSurname</p>
+                        <p><strong>Academic Manager:</strong> @submissionInfo.ApprovalProcess.Manager?.ManagerName @submissionInfo.ApprovalProcess.Manager?.ManagerSurname</p>
                                     }
                                     else
                                     {
-                                        <p><strong>Approval Process:</strong> Not yet started</p>
+                        <p><strong>Approval Process:</strong> Not yet started</p>
                                     }
-                                    <div class="progress">
-                                        <div class="progress-bar @GetProgressBarClass(submissionInfo.Claim.Status)" role="progressbar" style="width: @(GetProgressPercentage(submissionInfo.Claim.Status))%" aria-valuenow="@GetProgressPercentage(submissionInfo.Claim.Status)" aria-valuemin="0" aria-valuemax="100">
-                                            @submissionInfo.Claim.Status
-                                        </div>
-                                    </div>
-                                </div>
+
+                        <!-- Progress bar with overlay animation -->
+                        <div class="progress">
+                            <div class="progress-bar @GetProgressBarClass(submissionInfo.Claim.Status)" role="progressbar" style="width: @(GetProgressPercentage(submissionInfo.Claim.Status))%" aria-valuenow="@GetProgressPercentage(submissionInfo.Claim.Status)" aria-valuemin="0" aria-valuemax="100">
+                                <span class="dancing-text">@submissionInfo.Claim.Status</span>
+                                <div class="progress-bar-overlay"></div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
                     }
                 }
             }
             else
             {
-                <div class="col-12">
-                    <div class="alert alert-info" role="alert">
-                        No claims found for you. Please submit your claims to track their status.
-                    </div>
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    No claims found for you. Please submit your claims to track their status.
                 </div>
+            </div>
             }
         }
         else
@@ -275,10 +274,10 @@
                 </div>
             </div>
         }
+        </div>
     </div>
-</div>
 
-@functions {
+    @functions {
     private string GetProgressBarClass(string status)
     {
         return status switch
@@ -296,25 +295,24 @@
         {
             "Pending" => 50,
             "Approved" => 100,
-            "Rejected" => 95,
+            "Rejected" => 100,
             _ => 0
         };
     }
-}
+    }
 
-<script>
-    // JavaScript to toggle between List and Grid view
-    document.getElementById('listViewBtn').addEventListener('click', function () {
-        document.getElementById('claimsContainer').classList.remove('grid-view');
-        document.getElementById('claimsContainer').classList.add('list-view');
-        this.classList.add('active-btn'); // Set this button as active
-        document.getElementById('gridViewBtn').classList.remove('active-btn'); // Remove active from grid button
-    });
+           <script>
+               document.getElementById('listViewBtn').addEventListener('click', function () {
+                   document.getElementById('claimsContainer').classList.remove('grid-view');
+                   document.getElementById('claimsContainer').classList.add('list-view');
+                   this.classList.add('active-btn');
+                   document.getElementById('gridViewBtn').classList.remove('active-btn');
+               });
 
-    document.getElementById('gridViewBtn').addEventListener('click', function () {
-        document.getElementById('claimsContainer').classList.remove('list-view');
-        document.getElementById('claimsContainer').classList.add('grid-view');
-        this.classList.add('active-btn'); // Set this button as active
-        document.getElementById('listViewBtn').classList.remove('active-btn'); // Remove active from list button
-    });
-</script>
+               document.getElementById('gridViewBtn').addEventListener('click', function () {
+                   document.getElementById('claimsContainer').classList.remove('list-view');
+                   document.getElementById('claimsContainer').classList.add('grid-view');
+                   this.classList.add('active-btn');
+                   document.getElementById('listViewBtn').classList.remove('active-btn');
+               });
+           </script>

@@ -1,4 +1,4 @@
-﻿@model ContractMonthlyClaimSystem.Models.ProgrammeCoordinator
+﻿@model Contract_Monthly_Claim_System.Models.ProgrammeCoordinator
 
 @{
     ViewData["Title"] = "Register Programme Coordinator";
@@ -8,16 +8,17 @@
 {
     foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
     {
-        <div class="alert alert-danger">
-            @error.ErrorMessage
-        </div>
+<div class="alert alert-danger">
+    @error.ErrorMessage
+</div>
     }
 }
 
-<div class="register-container">
-    <div class="register-box">
-        <h1 class="register-title">Register Programme Coordinator</h1>
-        <p class="register-subtitle">Fill in the details below to create your account</p>
+<!-- Centered container for the registration form -->
+<div class="register-container fade-in">
+    <div class="register-box fade-in">
+        <h1 class="register-title">Create an Account (Programme Coordinator)</h1>
+        <p class="register-subtitle">Please fill in the details below to create your account</p>
 
         <!-- Registration Form -->
         <form asp-action="RegisterC" method="post">
@@ -52,7 +53,12 @@
             <!-- Coordinator Password input -->
             <div class="form-group">
                 <label for="CoordinatorPassword">Password</label>
-                <input asp-for="CoordinatorPassword" type="password" class="form-control" placeholder="Enter your password" required>
+                <div class="password-input">
+                    <input asp-for="CoordinatorPassword" type="password" class="form-control" id="CoordinatorPassword" placeholder="Enter your password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility()">
+                        <i class="fa fa-eye" id="toggleIcon"></i>
+                    </span>
+                </div>
                 <span asp-validation-for="CoordinatorPassword" class="text-danger"></span>
             </div>
 
@@ -63,6 +69,7 @@
         <!-- Option for password recovery -->
         <p class="login-option"><a href="@Url.Action("Login", "Home")">Already have an account? Log in here.</a></p>
     </div>
+</div>
 </div>
 
 <!-- Custom styles for the register page -->

@@ -1,163 +1,148 @@
-﻿@model ContractMonthlyClaimSystem.Models.Lecturer;
+﻿@model Contract_Monthly_Claim_System.Models.Lecturer;
 @{
     ViewData["Title"] = "Register Page";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</head>
-<body>
+<!-- Centered container for the registration form -->
+<div class="register-container fade-in">
+    <div class="register-box fade-in">
+        <h1 class="register-title">Create an Account (Lecturer)</h1>
+        <p class="register-subtitle">Please fill in the details to create a new lecturer account</p>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="#">Contract Monthly Claim System</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("Login", "Home")">Login</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+        <!-- Registration Form -->
+        <form asp-action="Register" method="post">
+            <!-- Name input -->
+            <div class="form-group">
+                <label for="LecturerName">Name</label>
+                <input asp-for="LecturerName" class="form-control" placeholder="Enter your name" required>
+                <span asp-validation-for="LecturerName" class="text-danger"></span>
+            </div>
 
-    <!-- Registration Form -->
-    <div class="container register-container">
-        <div class="register-box">
-            <h1 class="register-title">Create an Account</h1>
-            <p class="register-subtitle">Please fill in the details to create a new lecturer account</p>
+            <!-- Surname input -->
+            <div class="form-group">
+                <label for="LecturerSurname">Surname</label>
+                <input asp-for="LecturerSurname" class="form-control" placeholder="Enter your surname" required>
+                <span asp-validation-for="LecturerSurname" class="text-danger"></span>
+            </div>
 
-            <form asp-action="Register" method="post">
-                <div class="form-group">
-                    <label for="Name">Name</label>
-                    <input asp-for="LecturerName" class="form-control" placeholder="Enter your name" required>
-                    <span asp-validation-for="LecturerName" class="text-danger"></span>
+            <!-- Phone number input -->
+            <div class="form-group">
+                <label for="LecturerPhone">Phone Number</label>
+                <input asp-for="LecturerPhone" class="form-control" placeholder="Enter your phone number" required>
+                <span asp-validation-for="LecturerPhone" class="text-danger"></span>
+            </div>
+
+            <!-- Email input -->
+            <div class="form-group">
+                <label for="LecturerEmail">Email</label>
+                <input asp-for="LecturerEmail" class="form-control" placeholder="Enter your email" required>
+                <span asp-validation-for="LecturerEmail" class="text-danger"></span>
+            </div>
+
+            <!-- Password input -->
+            <div class="form-group">
+                <label for="LecturerPassword">Password</label>
+                <div class="password-input">
+                    <input asp-for="LecturerPassword" type="password" class="form-control" id="LecturerPassword" placeholder="Enter your password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility()">
+                        <i class="fa fa-eye" id="toggleIcon"></i>
+                    </span>
                 </div>
+                <span asp-validation-for="LecturerPassword" class="text-danger"></span>
+            </div>
 
-                <div class="form-group">
-                    <label for="Surname">Surname</label>
-                    <input asp-for="LecturerSurname" class="form-control" placeholder="Enter your surname" required>
-                    <span asp-validation-for="LecturerSurname" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="PhoneNumber">Phone Number</label>
-                    <input asp-for="LecturerPhone" class="form-control" placeholder="Enter your phone number" required>
-                    <span asp-validation-for="LecturerPhone" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="Email">Email</label>
-                    <input asp-for="LecturerEmail" class="form-control" placeholder="Enter your email" required>
-                    <span asp-validation-for="LecturerEmail" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="Password">Password</label>
-                    <input asp-for="LecturerPassword" type="password" class="form-control" placeholder="Enter your password" required>
-                    <span asp-validation-for="LecturerPassword" class="text-danger"></span>
-                </div>
-
-                <button type="submit" class="btn btn-primary register-btn">Register</button>
-            </form>
-        </div>
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary register-btn">Register</button>
+        </form>
     </div>
+</div>
 
-    <!-- Custom styles for the registration page -->
-    <style>
-        /* General Styles */
-        body {
-            background-color: #f3e5f5;
-            font-family: 'Poppins', sans-serif;
-            color: #4a148c;
+<!-- Custom styles for the registration page -->
+<style>
+    /* General Styles */
+    body {
+        background-color: #f3e5f5;
+        font-family: 'Poppins', sans-serif;
+        color: #4a148c;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+        background-color: #ce93d8;
+        color: #4a148c;
+        padding: 15px 30px;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .navbar-brand {
+        color: #4a148c;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .nav-link {
+        color: #4a148c;
+        font-weight: 500;
+        margin-right: 20px;
+    }
+
+    /* Container Styles */
+    .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .register-box {
+        background-color: #ffffff;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .register-title {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .register-subtitle {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Form Styles */
+    .form-control {
+        border-color: #7b1fa2;
+        border-radius: 5px;
+        padding: 0.75rem;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        color: #4a148c;
+    }
+
+    /* Button Styles */
+    .register-btn {
+        background-color: #7b1fa2;
+        border: none;
+        color: #fff;
+        font-size: 1.1rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        margin-top: 1.5rem;
+        width: 100%;
+    }
+
+        .register-btn:hover {
+            background-color: #6a0080;
         }
-
-        /* Navbar Styles */
-        .navbar {
-            background-color: #ce93d8;
-            color: #4a148c;
-            padding: 15px 30px;
-            border-radius: 0 0 10px 10px;
-        }
-
-        .navbar-brand {
-            color: #4a148c;
-            font-size: 24px;
-            font-weight: 600;
-        }
-
-        .nav-link {
-            color: #4a148c;
-            font-weight: 500;
-            margin-right: 20px;
-        }
-
-        /* Container Styles */
-        .register-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .register-box {
-            background-color: #ffffff;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .register-title {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .register-subtitle {
-            color: #6c757d;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Form Styles */
-        .form-control {
-            border-color: #7b1fa2;
-            border-radius: 5px;
-            padding: 0.75rem;
-        }
-
-        .form-group label {
-            font-weight: bold;
-            color: #4a148c;
-        }
-
-        /* Button Styles */
-        .register-btn {
-            background-color: #7b1fa2;
-            border: none;
-            color: #fff;
-            font-size: 1.1rem;
-            padding: 0.75rem 1.5rem;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            margin-top: 1.5rem;
-            width: 100%;
-        }
-
-            .register-btn:hover {
-                background-color: #6a0080;
-            }
-    </style>
+</style>
 
 </body>
 </html>

@@ -1,4 +1,5 @@
-﻿@model ContractMonthlyClaimSystem.Models.AcademicManager
+﻿@model Contract_Monthly_Claim_System.Models.AcademicManager
+
 @{
     ViewData["Title"] = "Register Academic Manager";
 }
@@ -7,16 +8,15 @@
 {
     foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
     {
-        <div class="alert alert-danger">
-            @error.ErrorMessage
-        </div>
+<div class="alert alert-danger">
+    @error.ErrorMessage
+</div>
     }
 }
 
-<!-- Centered container for the registration form -->
-<div class="register-container">
-    <div class="register-box">
-        <h1 class="register-title">Register Academic Manager</h1>
+<div class="register-container fade-in">
+    <div class="register-box fade-in">
+        <h1 class="register-title">Create an Account (Academic Manager)</h1>
         <p class="register-subtitle">Please fill in the details below to create your account</p>
 
         <!-- Registration Form -->
@@ -52,7 +52,12 @@
             <!-- Manager Password input -->
             <div class="form-group">
                 <label for="ManagerPassword">Password</label>
-                <input asp-for="ManagerPassword" type="password" class="form-control" placeholder="Enter your password" required>
+                <div class="password-input">
+                    <input asp-for="ManagerPassword" type="password" class="form-control" id="ManagerPassword" placeholder="Enter your password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility()">
+                        <i class="fa fa-eye" id="toggleIcon"></i>
+                    </span>
+                </div>
                 <span asp-validation-for="ManagerPassword" class="text-danger"></span>
             </div>
 

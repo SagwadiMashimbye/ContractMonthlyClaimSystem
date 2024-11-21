@@ -1,116 +1,279 @@
-﻿@model ContractMonthlyClaimSystem.Models.SubmitClaimsViewModel
+﻿@model Contract_Monthly_Claim_System.Models.SubmitClaimsViewModel
 @{
     ViewData["Title"] = "About Us";
 }
 
-<div class="container mt-5">
-    <h1 class="text-center">@ViewData["Title"]</h1>
+<h1 class="text-center">@ViewData["Title"]</h1>
 
+<div class="container">
     @if (User.Identity.IsAuthenticated)
     {
-        <div class="text-center my-4">
-            @if (User.IsInRole("Programme Coordinator"))
+        // Check if the user is a Programme Coordinator
+        if (User.IsInRole("Programme Coordinator"))
+        {
+            var coordinator = Model.ProgrammeCoordinator; // Fetch the Programme Coordinator from the model
+
+            if (coordinator != null)
             {
-                var coordinator = Model.ProgrammeCoordinator;
-                if (coordinator != null)
-                {
-                    <p class="lead">Welcome, @coordinator.CoordinatorName @coordinator.CoordinatorSurname!</p>
-                    <p>Your role as a Programme Coordinator involves verifying claims and managing lecturers effectively.</p>
-                    <div class="row mt-4">
-                        <div class="col-md-6">
-                            <h2>Overview</h2>
-                            <p>
-                                Your role is crucial in ensuring that all claims submitted by lecturers are thoroughly reviewed.
-                                Use this platform to streamline the verification process, maintain communication with lecturers,
-                                and uphold the integrity of your program.
-                            </p>
-                        </div>
-                        <div class="col-md-6">
-                            <h2>Responsibilities</h2>
-                            <ul>
-                                <li>Verify claims for accuracy and compliance.</li>
-                                <li>Approve or reject claims based on criteria.</li>
-                                <li>Provide feedback on rejected claims.</li>
-                                <li>Maintain records for reporting and audits.</li>
-                                <li>Communicate with lecturers to resolve issues.</li>
-                            </ul>
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <p>Error: Programme Coordinator not found.</p>
-                }
-            }
-            else if (User.IsInRole("Academic Manager"))
-            {
-                var academicManager = Model.AcademicManager;
-                if (academicManager != null)
-                {
-                    <p class="lead">Welcome, @academicManager.ManagerName @academicManager.ManagerSurname!</p>
-                    <p>You oversee the management of claims and ensure compliance with institutional standards.</p>
-                    <div class="row mt-4">
-                        <div class="col-md-6">
-                            <h2>Your Role</h2>
-                            <p>
-                                As an Academic Manager, you play a vital role in the claims process, ensuring that all claims are
-                                handled correctly. Use this platform to support Programme Coordinators and lecturers.
-                            </p>
-                        </div>
-                        <div class="col-md-6">
-                            <h2>Responsibilities</h2>
-                            <ul>
-                                <li>Review claims for compliance.</li>
-                                <li>Provide oversight to Programme Coordinators.</li>
-                                <li>Collaborate with faculty on claim issues.</li>
-                                <li>Maintain comprehensive records for audits.</li>
-                                <li>Develop strategies for process improvements.</li>
-                            </ul>
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <p>Error: Academic Manager not found.</p>
-                }
-            }
-            else if (User.IsInRole("Lecturer"))
-            {
-                var lecturer = Model.Lecturer;
-                <p class="lead">Welcome, @lecturer.LecturerName @lecturer.LecturerSurname!</p>
-                <p>You can submit claims and track their status in real-time.</p>
-                <div class="row mt-4">
-                    <div class="col-md-6">
-                        <h2>Your Role</h2>
-                        <p>
-                            As a Lecturer, you play an essential role in the academic community. Use this platform to submit your claims
-                            for hours worked and track the progress efficiently.
-                        </p>
-                    </div>
-                    <div class="col-md-6">
-                        <h2>Key Features</h2>
-                        <ul>
-                            <li>Real-Time Tracking of claims.</li>
-                            <li>Detailed Reporting for transparency.</li>
-                            <li>User Management features.</li>
-                            <li>Notification System for updates.</li>
-                        </ul>
-                    </div>
-                </div>
+    <p class="lead text-center">Welcome, @coordinator.CoordinatorName @coordinator.CoordinatorSurname!</p>
+    <p class="text-center">Here you can verify claims and manage lecturers.</p>
+
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Overview</h2>
+            <p>
+                As a @(User.IsInRole("Programme Coordinator") ? "Programme Coordinator" : "Academic Manager"), your role is crucial in ensuring that all claims submitted by lecturers are thoroughly reviewed and managed. This platform allows you to streamline the verification process, maintain communication with lecturers, and uphold the academic integrity of your program.
+            </p>
+        </div>
+    </div>
+
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Responsibilities</h2>
+            <ul>
+                <li>Verify claims submitted by lecturers for accuracy and compliance with institutional policies.</li>
+                <li>Approve or reject claims based on predefined criteria.</li>
+                <li>Provide constructive feedback to lecturers regarding rejected claims.</li>
+                <li>Maintain records of all claims and their statuses for reporting and auditing purposes.</li>
+                <li>Communicate effectively with lecturers to resolve any discrepancies or issues related to claims.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Key Features</h2>
+            <p>
+                Our dashboard provides a user-friendly interface to help you manage claims efficiently. Key features include:
+            </p>
+            <ul>
+                <li><strong>Real-Time Tracking:</strong> Monitor the status of all claims submitted by lecturers, ensuring timely approvals and feedback.</li>
+                <li><strong>Detailed Reporting:</strong> Generate reports on claim submissions, approvals, and rejections to facilitate decision-making.</li>
+                <li><strong>User Management:</strong> Easily manage lecturer accounts and permissions within the system.</li>
+                <li><strong>Notification System:</strong> Receive alerts for pending claims and feedback requests to ensure nothing is overlooked.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Support and Resources</h2>
+            <p>
+                If you encounter any issues while using the system or have questions regarding the claims process, please reach out to our support team. We also provide a range of resources to help you maximize your use of the platform:
+            </p>
+            <ul>
+                <li><strong>User Manuals:</strong> Comprehensive guides on how to navigate the system and utilize its features.</li>
+                <li><strong>FAQs:</strong> Frequently asked questions addressing common concerns and queries.</li>
+                <li><strong>Training Sessions:</strong> Scheduled training for new coordinators to familiarize them with the system's functionalities.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Contact Us</h2>
+            <p>
+                For further assistance, please contact the administration office:
+            </p>
+            <p>
+                <strong>Email:</strong> support@yourinstitution.edu<br />
+                <strong>Phone:</strong> (123) 456-7890<br />
+                <strong>Office Hours:</strong> Monday to Friday, 9 AM - 5 PM
+            </p>
+        </div>
+    </div>
             }
             else
             {
-                <p>Error: Role not recognized.</p>
+    <p>Error: Programme Coordinator not found.</p>
             }
+        }
+        // Check if the user is an Academic Manager
+        else if (User.IsInRole("Academic Manager"))
+        {
+            var academicManager = Model.AcademicManager; // Fetch the Academic Manager from the model
+
+            if (academicManager != null)
+            {
+    <p class="lead text-center">Welcome, @academicManager.ManagerName @academicManager.ManagerSurname!</p>
+    <p class="text-center">Here you can oversee the management of claims and ensure compliance.</p>
+
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Your Role</h2>
+            <p>
+                As an Academic Manager, your role is vital in maintaining the integrity of the claims process. You are responsible for ensuring that all claims are processed accurately and in accordance with institutional policies.
+            </p>
         </div>
+    </div>
+
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Responsibilities</h2>
+            <ul>
+                <li>Review and analyze claims submitted by lecturers to ensure they meet compliance standards.</li>
+                <li>Provide oversight and support to Programme Coordinators in their verification processes.</li>
+                <li>Collaborate with faculty to address any issues related to claims submissions.</li>
+                <li>Maintain comprehensive records of claims, approvals, and feedback for transparency and accountability.</li>
+                <li>Develop strategies for improving the claims process and enhancing user experience.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Key Features</h2>
+            <p>
+                As an Academic Manager, you will have access to various tools to help you manage the claims process effectively. Key features include:
+            </p>
+            <ul>
+                <li><strong>Comprehensive Dashboards:</strong> Access detailed insights into claim submissions and approvals.</li>
+                <li><strong>Performance Metrics:</strong> Analyze the performance of Programme Coordinators in managing claims.</li>
+                <li><strong>Enhanced Reporting:</strong> Generate detailed reports for academic audits and compliance checks.</li>
+                <li><strong>Communication Tools:</strong> Engage with lecturers and Programme Coordinators through the system for any clarifications or feedback.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Support and Resources</h2>
+            <p>
+                Should you need assistance or wish to improve your understanding of the system, please utilize the following resources:
+            </p>
+            <ul>
+                <li><strong>Training Workshops:</strong> Regular workshops to help you familiarize yourself with new features and processes.</li>
+                <li><strong>Documentation:</strong> Detailed guides on system functionalities and best practices.</li>
+                <li><strong>Support Team:</strong> Reach out to our support team for any urgent queries or technical issues.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Contact Us</h2>
+            <p>
+                For further assistance, please contact the administration office:
+            </p>
+            <p>
+                <strong>Email:</strong> support@yourinstitution.edu<br />
+                <strong>Phone:</strong> (123) 456-7890<br />
+                <strong>Office Hours:</strong> Monday to Friday, 9 AM - 5 PM
+            </p>
+        </div>
+    </div>
+            }
+            else
+            {
+    <p>Error: Academic Manager not found.</p>
+            }
+        }
+        // Check if the user is a Lecturer
+        else if (User.IsInRole("Lecturer"))
+        {
+            var lecturer = Model.Lecturer; // Ensure the Lecturer is fetched from the model
+
+    <p class="lead text-center">Welcome, @lecturer.LecturerName @lecturer.LecturerSurname!</p>
+    <p class="text-center">Here you can submit your claims and track their status.</p>
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Your Role</h2>
+            <p>
+                As a Lecturer, you play a vital role in our academic community. Your submissions help in accurately compensating the work you put in. This platform allows you to submit your claims for hours worked and track their progress in real-time.
+            </p>
+        </div>
+    </div>
+ <!-- Additional content for lecturers can go here -->
+        }
+        // Check if the user is an HR
+        else if (User.IsInRole("HR"))
+        {
+            var hr = Model.HR; // Fetch the HR from the model
+
+            if (hr != null)
+            {
+    <p class="lead text-center">Welcome, @hr.HRName @hr.HRSurname!</p>
+    <p class="text-center">Here you can manage employee records and oversee claims processing.</p>
+
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Your Role</h2>
+            <p>
+                As an HR, your role is essential for maintaining and managing the staff records and ensuring compliance in the claims process. This platform enables you to support both the academic and administrative aspects of the institution.
+            </p>
+        </div>
+    </div>
+
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Responsibilities</h2>
+            <ul>
+                <li>Maintain up-to-date records for all employees, including lecturers and administrative staff.</li>
+                <li>Oversee and manage the claims approval process in collaboration with academic staff.</li>
+                <li>Provide support and resources for staff regarding claim submissions and queries.</li>
+                <li>Ensure all claims comply with institutional and legal policies.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Key Features</h2>
+            <p>
+                The platform offers various features to streamline HR tasks, including:
+            </p>
+            <ul>
+                <li><strong>Employee Management:</strong> Easily manage staff records and update their information as needed.</li>
+                <li><strong>Claim Oversight:</strong> Monitor claims and collaborate with managers and coordinators to ensure accurate processing.</li>
+                <li><strong>Reports and Analysis:</strong> Generate detailed reports for payroll, auditing, and compliance checks.</li>
+                <li><strong>Staff Communication:</strong> Engage with academic and administrative staff for any claim-related inquiries or updates.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Support and Resources</h2>
+            <p>
+                For assistance with the platform or guidance on claim processes, please reach out to our support team. Available resources include:
+            </p>
+            <ul>
+                <li><strong>HR Manuals:</strong> Comprehensive guides on using the platform’s HR functionalities.</li>
+                <li><strong>Workshops:</strong> Attend training sessions focused on enhancing your understanding of HR tools and processes.</li>
+                <li><strong>Support Team:</strong> Our support team is available for any technical assistance or queries.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row my-4">
+        <div class="col-md-12">
+            <h2>Contact Us</h2>
+            <p>
+                For further assistance, please contact the administration office:
+            </p>
+            <p>
+                <strong>Email:</strong> support@yourinstitution.edu<br />
+                <strong>Phone:</strong> (123) 456-7890<br />
+                <strong>Office Hours:</strong> Monday to Friday, 9 AM - 5 PM
+            </p>
+        </div>
+    </div>
+            }
+            else
+            {
+    <p>Error: HR not found.</p>
+            }
+        }
+        else
+        {
+    <p>Error: Role not recognized.</p>
+        }
     }
     else
     {
-        <div class="text-center my-4">
-            <p class="lead">Welcome, Guest!</p>
-            <p>Please log in to access your account and manage claims.</p>
-            <a class="btn btn-primary" asp-controller="Home" asp-action="Login">Log In</a>
-        </div>
+    <p class="lead text-center">Welcome, Guest!</p>
+    <p class="text-center">Please log in to access your account.</p>
+    <a class="btn btn-primary login-btn" asp-controller="Home" asp-action="Login">Log In</a>
     }
 </div>
 
