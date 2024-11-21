@@ -6,9 +6,6 @@ namespace ContractMonthlyClaimSystem.Models
 {
     public class ClaimsModules
     {
-        [Key]
-        public int ClaimsModulesID { get; set; }
-
         [ForeignKey("Claims")]
         public int ClaimID { get; set; }
         public Claims Claims { get; set; }
