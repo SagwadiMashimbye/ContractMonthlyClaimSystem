@@ -10,6 +10,7 @@ namespace ContractMonthlyClaimSystem.Models
         public Lecturer Lecturer { get; set; } // Assuming this is a reference to the Lecturer model
         public ProgrammeCoordinator ProgrammeCoordinator { get; set; } // Optional
         public AcademicManager AcademicManager { get; set; } // Optional
+        public HR HR { get; set; }
         public List<string> Modules { get; set; } = new List<string>();
         public List<string> SelectedModules { get; set; } = new List<string>();
 
