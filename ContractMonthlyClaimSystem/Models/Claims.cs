@@ -31,5 +31,6 @@ namespace ContractMonthlyClaimSystem.Models
         public ICollection<ClaimsModules> ClaimsModules { get; set; } = new List<ClaimsModules>();
         public ICollection<ApprovalProcess> ApprovalProcesses { get; set; } = new List<ApprovalProcess>();
         public ICollection<SupportingDocuments> SupportingDocuments { get; set; } = new List<SupportingDocuments>();
+        public ICollection<ReportMetadata> ReportMetadata { get; set; } = new List<ReportMetadata>();
     }
 }
