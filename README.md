@@ -1,4 +1,5 @@
 # ContractMonthlyClaimSystem
+https://github.com/SagwadiMashimbye/ContractMonthlyClaimSystem
 
 ## Overview
 The Contract Monthly Claims System is a web application that allows lecturers to submit claims for hours worked, program coordinators and academic managers to verify and reject claims, and users to track the status of their claims. The application features user authentication, a user-friendly interface, and real-time updates on claim status.
